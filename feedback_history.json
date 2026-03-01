@@ -1,0 +1,310 @@
+[
+    {
+        "asset": "XXBTZUSD",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.9%",
+        "snapshot_mercato": {
+            "z_score": 1.6977513124730315,
+            "cvd_divergence": -0.927075866730194,
+            "funding_z_score": -2.0,
+            "book_pressure": 0.8105581755472655,
+            "atr": 410.6357142857128
+        },
+        "timestamp": "2026-02-28T23:35:21.256348"
+    },
+    {
+        "asset": "XETHZUSD",
+        "score": 7,
+        "outcome": "WIN",
+        "motivi": "Chiusura con PNL: 2.62%",
+        "snapshot_mercato": {
+            "z_score": 2.0308403714741,
+            "cvd_divergence": -0.9316203131851931,
+            "funding_z_score": -2.0,
+            "book_pressure": 0.6258394893583044,
+            "atr": 14.946428571428587
+        },
+        "timestamp": "2026-03-01T02:53:23.270043"
+    },
+    {
+        "asset": "XETHZUSD",
+        "score": 7,
+        "outcome": "WIN",
+        "motivi": "Chiusura con PNL: 0.56%",
+        "snapshot_mercato": {
+            "z_score": 2.607731262466811,
+            "cvd_divergence": 0.3522925495270507,
+            "funding_z_score": -2.0,
+            "book_pressure": 0.9422267427840134,
+            "atr": 14.134285714285706
+        },
+        "timestamp": "2026-03-01T04:54:04.077395"
+    },
+    {
+        "asset": "XETHXXBT",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.03%",
+        "snapshot_mercato": {
+            "z_score": 1.4934793186219926,
+            "cvd_divergence": 0.7172737574221872,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.0727517885715772,
+            "atr": 5.5714285714285424e-05
+        },
+        "timestamp": "2026-03-01T08:45:51.848427"
+    },
+    {
+        "asset": "XETHXXBT",
+        "score": 7,
+        "outcome": "WIN",
+        "motivi": "Chiusura con PNL: 0.07%",
+        "snapshot_mercato": {
+            "z_score": 1.2654269444911574,
+            "cvd_divergence": 0.3471437902019507,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.036655400475165,
+            "atr": 4.642857142857078e-05
+        },
+        "timestamp": "2026-03-01T10:30:59.682861"
+    },
+    {
+        "asset": "XETHXXBT",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.03%",
+        "snapshot_mercato": {
+            "z_score": 1.239361728557608,
+            "cvd_divergence": 0.17081031508701242,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.0746156907285578,
+            "atr": 4.571428571428509e-05
+        },
+        "timestamp": "2026-03-01T10:46:03.578715"
+    },
+    {
+        "asset": "XXBTZUSD",
+        "score": 7,
+        "outcome": "WIN",
+        "motivi": "Chiusura con PNL: 2.19%",
+        "snapshot_mercato": {
+            "z_score": 1.7827513889843956,
+            "cvd_divergence": 0.5261240810476036,
+            "funding_z_score": -2.0,
+            "book_pressure": 0.8087940500249552,
+            "atr": 416.2928571428555
+        },
+        "timestamp": "2026-03-01T10:48:36.654787"
+    },
+    {
+        "asset": "XETHXXBT",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.03%",
+        "snapshot_mercato": {
+            "z_score": 0.7122637506257357,
+            "cvd_divergence": 0.4098043008569266,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.1301986380306412,
+            "atr": 3.5714285714285995e-05
+        },
+        "timestamp": "2026-03-01T14:47:52.029428"
+    },
+    {
+        "asset": "XXBTZUSD",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.76%",
+        "snapshot_mercato": {
+            "z_score": 0.3016673447222783,
+            "cvd_divergence": -0.7597912894465577,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.2585038322670552,
+            "atr": 223.9214285714292
+        },
+        "timestamp": "2026-03-01T14:52:43.498212"
+    },
+    {
+        "asset": "XETHZUSD",
+        "score": 8,
+        "outcome": "WIN",
+        "motivi": "Chiusura con PNL: 0.23%",
+        "snapshot_mercato": {
+            "z_score": 1.6684386486549727,
+            "cvd_divergence": 0.7413208740398388,
+            "funding_z_score": -2.0,
+            "book_pressure": 2.22774942275198,
+            "atr": 19.139999999999986
+        },
+        "timestamp": "2026-03-01T14:52:50.032208"
+    },
+    {
+        "asset": "XETHZUSD",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.7%",
+        "snapshot_mercato": {
+            "z_score": 1.0132305830793567,
+            "cvd_divergence": -0.058666902665769606,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.2708758527113793,
+            "atr": 9.660714285714269
+        },
+        "timestamp": "2026-03-01T15:42:38.351884"
+    },
+    {
+        "asset": "XXBTZUSD",
+        "score": 8,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.19%",
+        "snapshot_mercato": {
+            "z_score": 0.5992528674339928,
+            "cvd_divergence": -0.5000955585149356,
+            "funding_z_score": -2.0,
+            "book_pressure": 0.851678671828413,
+            "atr": 237.65714285714265
+        },
+        "timestamp": "2026-03-01T16:28:19.544849"
+    },
+    {
+        "asset": "XETHXXBT",
+        "score": 7,
+        "outcome": "WIN",
+        "motivi": "Chiusura con PNL: 0.03%",
+        "snapshot_mercato": {
+            "z_score": 1.0663639010048243,
+            "cvd_divergence": 0.5184210616747084,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.0596304370194711,
+            "atr": 6.642857142857145e-05
+        },
+        "timestamp": "2026-03-01T16:32:19.265484"
+    },
+    {
+        "asset": "XXBTZUSD",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.0%",
+        "snapshot_mercato": {
+            "z_score": 0.7451718715801253,
+            "cvd_divergence": -0.8019346433846725,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.1618996819773761,
+            "atr": 277.70714285714246
+        },
+        "timestamp": "2026-03-01T16:46:38.777872"
+    },
+    {
+        "asset": "XETHXXBT",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.07%",
+        "snapshot_mercato": {
+            "z_score": 1.0452214279701464,
+            "cvd_divergence": 0.5387768138401344,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.0368789456484167,
+            "atr": 6.428571428571414e-05
+        },
+        "timestamp": "2026-03-01T16:46:47.906915"
+    },
+    {
+        "asset": "XETHZUSD",
+        "score": 7,
+        "outcome": "WIN",
+        "motivi": "Chiusura con PNL: 2.42%",
+        "snapshot_mercato": {
+            "z_score": 0.9361995397043228,
+            "cvd_divergence": -0.7249544561162983,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.0532877137021897,
+            "atr": 12.617142857142833
+        },
+        "timestamp": "2026-03-01T17:50:46.348208"
+    },
+    {
+        "asset": "XETHXXBT",
+        "score": 7,
+        "outcome": "WIN",
+        "motivi": "Chiusura con PNL: 0.03%",
+        "snapshot_mercato": {
+            "z_score": 0.44677659755660437,
+            "cvd_divergence": 0.044324106213329745,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.1531294858226009,
+            "atr": 8.642857142857088e-05
+        },
+        "timestamp": "2026-03-01T18:08:21.378984"
+    },
+    {
+        "asset": "XETHXXBT",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.03%",
+        "snapshot_mercato": {
+            "z_score": 0.4989824362512838,
+            "cvd_divergence": -0.0932377827221904,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.120166871555297,
+            "atr": 6.571428571428527e-05
+        },
+        "timestamp": "2026-03-01T18:16:43.446859"
+    },
+    {
+        "asset": "XETHXXBT",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: 0.0%",
+        "snapshot_mercato": {
+            "z_score": 0.2492077370734095,
+            "cvd_divergence": -0.3368042023957486,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.1208745436072884,
+            "atr": 6.285714285714228e-05
+        },
+        "timestamp": "2026-03-01T18:32:02.798480"
+    },
+    {
+        "asset": "XXBTZUSD",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.0%",
+        "snapshot_mercato": {
+            "z_score": -1.0194142264947041,
+            "cvd_divergence": -0.18061125341387313,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.0226358064893208,
+            "atr": 309.25714285714224
+        },
+        "timestamp": "2026-03-01T20:16:56.534650"
+    },
+    {
+        "asset": "XETHZUSD",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.74%",
+        "snapshot_mercato": {
+            "z_score": -0.4159660759813503,
+            "cvd_divergence": 0.2241190944715997,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.4486613378459317,
+            "atr": 13.424999999999986
+        },
+        "timestamp": "2026-03-01T21:08:40.889317"
+    },
+    {
+        "asset": "XXBTZUSD",
+        "score": 7,
+        "outcome": "LOSS",
+        "motivi": "Chiusura con PNL: -0.57%",
+        "snapshot_mercato": {
+            "z_score": -0.7267583161068738,
+            "cvd_divergence": -0.562015955400714,
+            "funding_z_score": -2.0,
+            "book_pressure": 1.1316166235832172,
+            "atr": 275.8928571428556
+        },
+        "timestamp": "2026-03-01T23:37:22.974328"
+    }
+]

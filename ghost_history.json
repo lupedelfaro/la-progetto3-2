@@ -1,0 +1,3008 @@
+[
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 4,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02971,
+        "snapshot_mercato": {
+            "trade_velocity": 0.013371161716338623,
+            "cvd_reale": 22.062929789999984,
+            "whale_delta": 0,
+            "poc": 0.02935,
+            "high_24h": 0.03017,
+            "low_24h": 0.02909,
+            "close": 0.02971,
+            "vah": 0.03009,
+            "val": 0.02912,
+            "vwap": 0.02962628019152929,
+            "atr": 6.499999999999933e-05,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06727211570803628,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.04474906776626912,
+            "book_pressure": 1.132899273256353,
+            "vol_shock": 1.0755934533599674,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 117.72601784000003,
+            "muro_supporto": {
+                "prezzo": 0.02942,
+                "volume": 229.389,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.0301,
+                "volume": 232.542,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.6491010855922774,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02942,
+                "vol_supporto": 229.389,
+                "muro_resistenza": 0.0301,
+                "vol_resistenza": 232.542
+            },
+            "signal_quality": 0.05069618635130558
+        },
+        "timestamp": "2026-03-01T19:01:24.272017",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.04
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02971,
+        "snapshot_mercato": {
+            "trade_velocity": 0.013282815847431554,
+            "cvd_reale": 22.062929789999984,
+            "whale_delta": 0,
+            "poc": 0.02935,
+            "high_24h": 0.03017,
+            "low_24h": 0.02909,
+            "close": 0.02971,
+            "vah": 0.03009,
+            "val": 0.02912,
+            "vwap": 0.02962628019152929,
+            "atr": 6.499999999999933e-05,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06724949562879172,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.04474906776626912,
+            "book_pressure": 1.1172746310816732,
+            "vol_shock": 1.0755934533599674,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 117.72601784000003,
+            "muro_supporto": {
+                "prezzo": 0.02942,
+                "volume": 229.389,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.0301,
+                "volume": 229.038,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.6491010855922774,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02942,
+                "vol_supporto": 229.389,
+                "muro_resistenza": 0.0301,
+                "vol_resistenza": 229.038
+            },
+            "signal_quality": 0.04999699817980713
+        },
+        "timestamp": "2026-03-01T19:03:05.796918",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.01
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02993,
+        "snapshot_mercato": {
+            "trade_velocity": 0.013252917696246706,
+            "cvd_reale": 8.859261109999991,
+            "whale_delta": 0,
+            "poc": 0.02935,
+            "high_24h": 0.03017,
+            "low_24h": 0.02909,
+            "close": 0.02991,
+            "vah": 0.03009,
+            "val": 0.02912,
+            "vwap": 0.02962987016216676,
+            "atr": 8.07142857142849e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.100435219283558,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.7403404472529206,
+            "book_pressure": 1.0707921550694568,
+            "vol_shock": 1.2134278664602842,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 117.72601784000003,
+            "muro_supporto": {
+                "prezzo": 0.02942,
+                "volume": 230.213,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "21%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03027,
+                "volume": 230.184,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.5199920815194303,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02942,
+                "vol_supporto": 230.213,
+                "muro_resistenza": 0.03027,
+                "vol_resistenza": 230.184
+            },
+            "signal_quality": 0.7927507429990404
+        },
+        "timestamp": "2026-03-01T19:05:08.106805",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.04
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02986,
+        "snapshot_mercato": {
+            "trade_velocity": 0.013714077372350562,
+            "cvd_reale": -12.155525350000005,
+            "whale_delta": 0,
+            "poc": 0.02935,
+            "high_24h": 0.03017,
+            "low_24h": 0.02909,
+            "close": 0.02986,
+            "vah": 0.03009,
+            "val": 0.02912,
+            "vwap": 0.029642402837271254,
+            "atr": 8.571428571428495e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03347840642785267,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.5513245482439809,
+            "book_pressure": 1.1499133276215905,
+            "vol_shock": 1.189286263717818,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -117.72601784000003,
+            "muro_supporto": {
+                "prezzo": 0.02953,
+                "volume": 232.941,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03024,
+                "volume": 229.914,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.655990053025361,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02953,
+                "vol_supporto": 232.941,
+                "muro_resistenza": 0.03024,
+                "vol_resistenza": 229.914
+            },
+            "signal_quality": 0.6339754458707062
+        },
+        "timestamp": "2026-03-01T19:18:48.198369",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.0
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02985,
+        "snapshot_mercato": {
+            "trade_velocity": 0.01457552600766872,
+            "cvd_reale": -8.548765250000004,
+            "whale_delta": 0,
+            "poc": 0.029365000000000002,
+            "high_24h": 0.03017,
+            "low_24h": 0.02914,
+            "close": 0.02985,
+            "vah": 0.03004,
+            "val": 0.02929,
+            "vwap": 0.029660757670131026,
+            "atr": 8.928571428571387e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06704659738519161,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.5016762550250126,
+            "book_pressure": 1.1349669187204035,
+            "vol_shock": 1.1965462060571797,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -106.70762951,
+            "muro_supporto": {
+                "prezzo": 0.02951,
+                "volume": 230.743,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03015,
+                "volume": 236.284,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7877481913071036,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02951,
+                "vol_supporto": 230.743,
+                "muro_resistenza": 0.03015,
+                "vol_resistenza": 236.333
+            },
+            "signal_quality": 0.5693859533609298
+        },
+        "timestamp": "2026-03-01T19:31:15.313832",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.14
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02983,
+        "snapshot_mercato": {
+            "trade_velocity": 0.01389538618711396,
+            "cvd_reale": -11.778434489999995,
+            "whale_delta": 0,
+            "poc": 0.029365000000000002,
+            "high_24h": 0.03017,
+            "low_24h": 0.02914,
+            "close": 0.02983,
+            "vah": 0.03004,
+            "val": 0.02929,
+            "vwap": 0.029669859923445438,
+            "atr": 8.49999999999995e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06702412868633598,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.41365706389632856,
+            "book_pressure": 1.1449221472246096,
+            "vol_shock": 0.9977985103220809,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -106.70762951,
+            "muro_supporto": {
+                "prezzo": 0.02953,
+                "volume": 229.73,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03015,
+                "volume": 229.715,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7573501125303126,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02953,
+                "vol_supporto": 229.73,
+                "muro_resistenza": 0.03015,
+                "vol_resistenza": 229.715
+            },
+            "signal_quality": 0.47360513381081204
+        },
+        "timestamp": "2026-03-01T19:45:23.949947",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.07
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02985,
+        "snapshot_mercato": {
+            "trade_velocity": 0.01421736910959499,
+            "cvd_reale": -11.472250859999997,
+            "whale_delta": 0,
+            "poc": 0.029365000000000002,
+            "high_24h": 0.03017,
+            "low_24h": 0.02914,
+            "close": 0.02985,
+            "vah": 0.03004,
+            "val": 0.02929,
+            "vwap": 0.029669872419293836,
+            "atr": 8.714285714285681e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06702412868633598,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.4870150678701411,
+            "book_pressure": 1.1529683882090103,
+            "vol_shock": 1.0016189867118757,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -106.70762951,
+            "muro_supporto": {
+                "prezzo": 0.02953,
+                "volume": 229.73,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "13%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03017,
+                "volume": 230.484,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7414537129165407,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02953,
+                "vol_supporto": 229.73,
+                "muro_resistenza": 0.03017,
+                "vol_resistenza": 230.484
+            },
+            "signal_quality": 0.5615129778357383
+        },
+        "timestamp": "2026-03-01T19:46:43.759143",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.01
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02975,
+        "snapshot_mercato": {
+            "trade_velocity": 0.016338880716064753,
+            "cvd_reale": -25.920871250000005,
+            "whale_delta": 0,
+            "poc": 0.029315,
+            "high_24h": 0.03017,
+            "low_24h": 0.02917,
+            "close": 0.02975,
+            "vah": 0.03005,
+            "val": 0.02929,
+            "vwap": 0.029675919094726083,
+            "atr": 8.99999999999998e-05,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03357958361316183,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.09741430580327934,
+            "book_pressure": 1.186192557548722,
+            "vol_shock": 0.9766343292678487,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -144.77268381,
+            "muro_supporto": {
+                "prezzo": 0.02942,
+                "volume": 237.425,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03009,
+                "volume": 231.077,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7699702941066713,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02942,
+                "vol_supporto": 237.425,
+                "muro_resistenza": 0.03009,
+                "vol_resistenza": 231.077
+            },
+            "signal_quality": 0.11555212454262523
+        },
+        "timestamp": "2026-03-01T20:10:08.260765",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.01
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02975,
+        "snapshot_mercato": {
+            "trade_velocity": 0.016338880716064753,
+            "cvd_reale": -25.920871250000005,
+            "whale_delta": 0,
+            "poc": 0.029315,
+            "high_24h": 0.03017,
+            "low_24h": 0.02917,
+            "close": 0.02975,
+            "vah": 0.03005,
+            "val": 0.02929,
+            "vwap": 0.029675919094726083,
+            "atr": 8.99999999999998e-05,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03357958361316183,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.09741430580327934,
+            "book_pressure": 1.186192557548722,
+            "vol_shock": 0.9766343292678487,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -144.77268381,
+            "muro_supporto": {
+                "prezzo": 0.02942,
+                "volume": 237.425,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03009,
+                "volume": 231.077,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7699702941066713,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02942,
+                "vol_supporto": 237.425,
+                "muro_resistenza": 0.03009,
+                "vol_resistenza": 231.077
+            },
+            "signal_quality": 0.11555212454262523
+        },
+        "timestamp": "2026-03-01T20:10:51.726922",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.01
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02975,
+        "snapshot_mercato": {
+            "trade_velocity": 0.016338880716064753,
+            "cvd_reale": -25.920871250000005,
+            "whale_delta": 0,
+            "poc": 0.029315,
+            "high_24h": 0.03017,
+            "low_24h": 0.02917,
+            "close": 0.02975,
+            "vah": 0.03005,
+            "val": 0.02929,
+            "vwap": 0.029675919094726083,
+            "atr": 8.99999999999998e-05,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03357958361316183,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.09741430580327934,
+            "book_pressure": 1.186192557548722,
+            "vol_shock": 0.9766343292678487,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -144.77268381,
+            "muro_supporto": {
+                "prezzo": 0.02942,
+                "volume": 237.425,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03009,
+                "volume": 231.077,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7699702941066713,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02942,
+                "vol_supporto": 237.425,
+                "muro_resistenza": 0.03009,
+                "vol_resistenza": 231.077
+            },
+            "signal_quality": 0.11555212454262523
+        },
+        "timestamp": "2026-03-01T20:11:37.020907",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.01
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02975,
+        "snapshot_mercato": {
+            "trade_velocity": 0.016338880716064753,
+            "cvd_reale": -25.920871250000005,
+            "whale_delta": 0,
+            "poc": 0.029315,
+            "high_24h": 0.03017,
+            "low_24h": 0.02917,
+            "close": 0.02975,
+            "vah": 0.03005,
+            "val": 0.02929,
+            "vwap": 0.029675919094726083,
+            "atr": 8.99999999999998e-05,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03357958361316183,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.09741430580327934,
+            "book_pressure": 1.186192557548722,
+            "vol_shock": 0.9766343292678487,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -144.77268381,
+            "muro_supporto": {
+                "prezzo": 0.02942,
+                "volume": 237.425,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03009,
+                "volume": 231.077,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7699702941066713,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02942,
+                "vol_supporto": 237.425,
+                "muro_resistenza": 0.03009,
+                "vol_resistenza": 231.077
+            },
+            "signal_quality": 0.11555212454262523
+        },
+        "timestamp": "2026-03-01T20:12:22.348408",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.01
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02975,
+        "snapshot_mercato": {
+            "trade_velocity": 0.016338880716064753,
+            "cvd_reale": -25.920871250000005,
+            "whale_delta": 0,
+            "poc": 0.029315,
+            "high_24h": 0.03017,
+            "low_24h": 0.02917,
+            "close": 0.02975,
+            "vah": 0.03005,
+            "val": 0.02929,
+            "vwap": 0.029675919094726083,
+            "atr": 8.99999999999998e-05,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03357958361316183,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.09741430580327934,
+            "book_pressure": 1.186192557548722,
+            "vol_shock": 0.9766343292678487,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -144.77268381,
+            "muro_supporto": {
+                "prezzo": 0.02942,
+                "volume": 237.425,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03009,
+                "volume": 231.077,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7699702941066713,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02942,
+                "vol_supporto": 237.425,
+                "muro_resistenza": 0.03009,
+                "vol_resistenza": 231.077
+            },
+            "signal_quality": 0.11555212454262523
+        },
+        "timestamp": "2026-03-01T20:13:08.637916",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.01
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02974,
+        "snapshot_mercato": {
+            "trade_velocity": 0.016338880716064753,
+            "cvd_reale": -25.920871250000005,
+            "whale_delta": 0,
+            "poc": 0.029315,
+            "high_24h": 0.03017,
+            "low_24h": 0.02917,
+            "close": 0.02975,
+            "vah": 0.03005,
+            "val": 0.02929,
+            "vwap": 0.029675919094726083,
+            "atr": 8.99999999999998e-05,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03357958361316183,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.09741430580327934,
+            "book_pressure": 1.186192557548722,
+            "vol_shock": 0.9766343292678487,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -144.77268381,
+            "muro_supporto": {
+                "prezzo": 0.02942,
+                "volume": 237.425,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03009,
+                "volume": 231.077,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7699702941066713,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02942,
+                "vol_supporto": 237.425,
+                "muro_resistenza": 0.03009,
+                "vol_resistenza": 231.077
+            },
+            "signal_quality": 0.11555212454262523
+        },
+        "timestamp": "2026-03-01T20:13:55.985321",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.01
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02973,
+        "snapshot_mercato": {
+            "trade_velocity": 0.016338880716064753,
+            "cvd_reale": -25.920871250000005,
+            "whale_delta": 0,
+            "poc": 0.029315,
+            "high_24h": 0.03017,
+            "low_24h": 0.02917,
+            "close": 0.02975,
+            "vah": 0.03005,
+            "val": 0.02929,
+            "vwap": 0.029675919094726083,
+            "atr": 8.99999999999998e-05,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03357958361316183,
+            "funding_rate_ext": 0.0,
+            "z_score": 0.09741430580327934,
+            "book_pressure": 1.186192557548722,
+            "vol_shock": 0.9766343292678487,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -144.77268381,
+            "muro_supporto": {
+                "prezzo": 0.02942,
+                "volume": 237.425,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.03009,
+                "volume": 231.077,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7699702941066713,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02942,
+                "vol_supporto": 237.425,
+                "muro_resistenza": 0.03009,
+                "vol_resistenza": 231.077
+            },
+            "signal_quality": 0.11555212454262523
+        },
+        "timestamp": "2026-03-01T20:14:44.269273",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.01
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XXBTZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 65615.7,
+        "snapshot_mercato": {
+            "trade_velocity": 0.8690287318022705,
+            "cvd_reale": -0.2185501499999997,
+            "whale_delta": 0,
+            "poc": 67023.1875,
+            "high_24h": 68181.2,
+            "low_24h": 65100.0,
+            "close": 65615.7,
+            "vah": 67939.265,
+            "val": 65402.435,
+            "vwap": 66734.36448889395,
+            "atr": 275.457142857144,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.00015240278225188653,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.9496507957145601,
+            "book_pressure": 1.1059100726487334,
+            "vol_shock": 1.085890242167951,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -362.52945624,
+            "muro_supporto": {
+                "prezzo": 65563.8,
+                "volume": 7.627,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 65652.5,
+                "volume": 7.616,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7890136765180193,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 65563.8,
+                "vol_supporto": 7.627,
+                "muro_resistenza": 65643.2,
+                "vol_resistenza": 7.617
+            },
+            "signal_quality": 2.1561384531283503
+        },
+        "timestamp": "2026-03-01T22:24:42.945259",
+        "esito_verificato": true,
+        "esito_reale": "OCCASIONE_PERSA",
+        "pnl_potenziale": 1.07
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1927.44,
+        "snapshot_mercato": {
+            "trade_velocity": 0.3241712546745803,
+            "cvd_reale": -29.399224169999997,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1926.93,
+            "vah": 2045.21,
+            "val": 1959.118,
+            "vwap": 1988.4127123212302,
+            "atr": 14.07071428571427,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.017122576895932464,
+            "funding_rate_ext": 0.0,
+            "z_score": -2.042576565150595,
+            "book_pressure": 1.355506112941495,
+            "vol_shock": 1.0846342718200352,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1921.92,
+                "volume": 130.079,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1931.45,
+                "volume": 105.168,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.863772355982709,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1921.92,
+                "vol_supporto": 130.079,
+                "muro_resistenza": 1931.45,
+                "vol_resistenza": 105.168
+            },
+            "signal_quality": 2.768725020212673
+        },
+        "timestamp": "2026-03-01T22:24:58.253704",
+        "esito_verificato": true,
+        "esito_reale": "OCCASIONE_PERSA",
+        "pnl_potenziale": 1.42
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02935,
+        "snapshot_mercato": {
+            "trade_velocity": 0.025874910994864404,
+            "cvd_reale": -6.157901650000003,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02935,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.029647549776554278,
+            "atr": 9.499999999999984e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06814310051107048,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.573890145930349,
+            "book_pressure": 1.317432470173589,
+            "vol_shock": 0.9174156816827516,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -244.20213453000002,
+            "muro_supporto": {
+                "prezzo": 0.02905,
+                "volume": 230.406,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02968,
+                "volume": 233.585,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.8963934307080328,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02905,
+                "vol_supporto": 230.406,
+                "muro_resistenza": 0.02968,
+                "vol_resistenza": 233.585
+            },
+            "signal_quality": 2.0734939827348904
+        },
+        "timestamp": "2026-03-01T22:25:12.095888",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XXBTZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 65594.2,
+        "snapshot_mercato": {
+            "trade_velocity": 0.7736160621199734,
+            "cvd_reale": 0.16566515000000007,
+            "whale_delta": 1.11945239,
+            "poc": 67023.1875,
+            "high_24h": 68181.2,
+            "low_24h": 65100.0,
+            "close": 65575.6,
+            "vah": 67939.265,
+            "val": 65402.435,
+            "vwap": 66732.37118443967,
+            "atr": 235.03571428571482,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.008387240414909158,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.9578873673727555,
+            "book_pressure": 0.9270714164917483,
+            "vol_shock": 1.0829974100329365,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 362.52945624,
+            "muro_supporto": {
+                "prezzo": 65529.4,
+                "volume": 7.631,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 65601.5,
+                "volume": 7.622,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.7539566571030929,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 65517.3,
+                "vol_supporto": 7.632,
+                "muro_resistenza": 65601.5,
+                "vol_resistenza": 7.622
+            },
+            "signal_quality": 1.8151014150015603
+        },
+        "timestamp": "2026-03-01T22:30:22.635949",
+        "esito_verificato": true,
+        "esito_reale": "OCCASIONE_PERSA",
+        "pnl_potenziale": 1.1
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1924.91,
+        "snapshot_mercato": {
+            "trade_velocity": 0.3513877272331421,
+            "cvd_reale": -72.48468332000002,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1924.5,
+            "vah": 2045.21,
+            "val": 1959.118,
+            "vwap": 1988.7655246228178,
+            "atr": 11.529999999999989,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.0005196181845575141,
+            "funding_rate_ext": 0.0,
+            "z_score": -2.0788245968022796,
+            "book_pressure": 1.1814445387294432,
+            "vol_shock": 1.088523399154695,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1919.5,
+                "volume": 140.449,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1929.03,
+                "volume": 105.298,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.8528567187862451,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1919.5,
+                "vol_supporto": 140.48,
+                "muro_resistenza": 1930.06,
+                "vol_resistenza": 114.968
+            },
+            "signal_quality": 2.45601596686849
+        },
+        "timestamp": "2026-03-01T22:30:36.060803",
+        "esito_verificato": true,
+        "esito_reale": "OCCASIONE_PERSA",
+        "pnl_potenziale": 1.42
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02933,
+        "snapshot_mercato": {
+            "trade_velocity": 0.024956916765967334,
+            "cvd_reale": -6.169606090000001,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02933,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.029653351846504375,
+            "atr": 7.642857142857154e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06816632583503471,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.6565988860435517,
+            "book_pressure": 1.3117211089761185,
+            "vol_shock": 0.9172834111408609,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -232.93398057000002,
+            "muro_supporto": {
+                "prezzo": 0.02901,
+                "volume": 230.594,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02965,
+                "volume": 229.271,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.9070319144029435,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02901,
+                "vol_supporto": 230.594,
+                "muro_resistenza": 0.02965,
+                "vol_resistenza": 229.271
+            },
+            "signal_quality": 2.17299572792965
+        },
+        "timestamp": "2026-03-01T22:30:51.661806",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XXBTZUSD",
+        "score": 6,
+        "direzione": "SELL",
+        "prezzo_analisi": 65661.5,
+        "snapshot_mercato": {
+            "trade_velocity": 0.6617476077057142,
+            "cvd_reale": 0.5124496200000007,
+            "whale_delta": 0,
+            "poc": 67305.0575,
+            "high_24h": 68181.2,
+            "low_24h": 65100.0,
+            "close": 65661.6,
+            "vah": 67939.265,
+            "val": 65402.435,
+            "vwap": 66721.22323052825,
+            "atr": 224.99285714285725,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.0001522962466678659,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.7685432990814873,
+            "book_pressure": 1.313443932752594,
+            "vol_shock": 0.8607416132979863,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 313.75880659999996,
+            "muro_supporto": {
+                "prezzo": 65619.0,
+                "volume": 7.62,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 65706.5,
+                "volume": 7.61,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.7338175941663418,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 65618.3,
+                "vol_supporto": 7.62,
+                "muro_resistenza": 65676.5,
+                "vol_resistenza": 7.614
+            },
+            "signal_quality": 2.322882465988836
+        },
+        "timestamp": "2026-03-01T22:45:25.053053",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1926.63,
+        "snapshot_mercato": {
+            "trade_velocity": 0.41056763072371255,
+            "cvd_reale": -161.35547526000005,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1926.63,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1989.2626967654237,
+            "atr": 11.084285714285718,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.016093278720010457,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.9586091965135821,
+            "book_pressure": 1.5452876335108914,
+            "vol_shock": 0.9525598613236421,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1922.19,
+                "volume": 166.203,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1927.76,
+                "volume": 117.235,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.8559454662556547,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1922.19,
+                "vol_supporto": 166.203,
+                "muro_resistenza": 1927.76,
+                "vol_resistenza": 117.235
+            },
+            "signal_quality": 3.0266145702531415
+        },
+        "timestamp": "2026-03-01T22:45:38.520846",
+        "esito_verificato": true,
+        "esito_reale": "OCCASIONE_PERSA",
+        "pnl_potenziale": 1.35
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02933,
+        "snapshot_mercato": {
+            "trade_velocity": 0.022430797356591682,
+            "cvd_reale": -6.169606090000001,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02933,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.029657782168083364,
+            "atr": 7.142857142857149e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06816632583503471,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.6493327395358892,
+            "book_pressure": 1.2677774414643654,
+            "vol_shock": 0.9203888041470575,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -232.93398057000002,
+            "muro_supporto": {
+                "prezzo": 0.029,
+                "volume": 231.295,
+                "stato": "VERO_MURO_ISTITUZIONALE",
+                "affidabilita": "100%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02966,
+                "volume": 230.093,
+                "stato": "VERO_MURO_ISTITUZIONALE",
+                "affidabilita": "100%"
+            },
+            "cvd_divergence": 0.916382091168371,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.029,
+                "vol_supporto": 231.295,
+                "muro_resistenza": 0.02966,
+                "vol_resistenza": 230.093
+            },
+            "signal_quality": 2.090986840652222
+        },
+        "timestamp": "2026-03-01T22:45:53.739369",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XXBTZUSD",
+        "score": 4,
+        "direzione": "SELL",
+        "prezzo_analisi": 65667.8,
+        "snapshot_mercato": {
+            "trade_velocity": 0.6580052185052512,
+            "cvd_reale": 0.6340410700000001,
+            "whale_delta": 0,
+            "poc": 67305.0575,
+            "high_24h": 68181.2,
+            "low_24h": 65100.0,
+            "close": 65681.1,
+            "vah": 67939.265,
+            "val": 65402.435,
+            "vwap": 66721.87818274899,
+            "atr": 223.24285714285517,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.0001522510315096006,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.6974921804050527,
+            "book_pressure": 1.427650805545148,
+            "vol_shock": 0.8625317471994699,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 313.75880659999996,
+            "muro_supporto": {
+                "prezzo": 65515.9,
+                "volume": 12.467,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 65687.6,
+                "volume": 3.883,
+                "stato": "VERO_MURO_ISTITUZIONALE",
+                "affidabilita": "100%"
+            },
+            "cvd_divergence": -0.7126703452049501,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 65515.9,
+                "vol_supporto": 12.467,
+                "muro_resistenza": 65662.6,
+                "vol_resistenza": 4.814
+            },
+            "signal_quality": 2.4234260787618633
+        },
+        "timestamp": "2026-03-01T23:00:23.642233",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 5,
+        "direzione": "BUY",
+        "prezzo_analisi": 1928.24,
+        "snapshot_mercato": {
+            "trade_velocity": 0.30936683035544127,
+            "cvd_reale": -5.471116119999996,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1928.29,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1989.4846988901425,
+            "atr": 11.108571428571427,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.02385904491206056,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.8714167837960953,
+            "book_pressure": 1.6206686578482707,
+            "vol_shock": 0.959863713417503,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1921.19,
+                "volume": 1051.214,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1938.08,
+                "volume": 317.935,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.8495795197773929,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1921.19,
+                "vol_supporto": 1041.023,
+                "muro_resistenza": 1939.81,
+                "vol_resistenza": 1031.027
+            },
+            "signal_quality": 3.0329465272695453
+        },
+        "timestamp": "2026-03-01T23:00:40.120198",
+        "esito_verificato": true,
+        "esito_reale": "OCCASIONE_PERSA",
+        "pnl_potenziale": 1.21
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02938,
+        "snapshot_mercato": {
+            "trade_velocity": 0.02122815859014276,
+            "cvd_reale": -2.105895599999999,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02938,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.02966661150321548,
+            "atr": 7.285714285714286e-05,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.0681198910081716,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.4539320294196978,
+            "book_pressure": 1.4477432408557025,
+            "vol_shock": 0.9447394720598545,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -232.93398057000002,
+            "muro_supporto": {
+                "prezzo": 0.02906,
+                "volume": 228.885,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02969,
+                "volume": 229.858,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.9076553981881349,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02906,
+                "vol_supporto": 228.885,
+                "muro_resistenza": 0.02969,
+                "vol_resistenza": 229.858
+            },
+            "signal_quality": 2.1049202682559818
+        },
+        "timestamp": "2026-03-01T23:00:53.553794",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1954.9,
+        "snapshot_mercato": {
+            "trade_velocity": 7.89426264216689,
+            "cvd_reale": -48.11604398000006,
+            "whale_delta": -61.045547439999986,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1954.9,
+            "vah": 2045.21,
+            "val": 1952.495,
+            "vwap": 1987.5163027616532,
+            "atr": 13.91285714285714,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.0005115089514061843,
+            "funding_rate_ext": 0.0,
+            "z_score": -0.9965895897206117,
+            "book_pressure": 1.2890444801165797,
+            "vol_shock": 1.1229427472378664,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1946.54,
+                "volume": 1027.46,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1966.33,
+                "volume": 1017.124,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7700112970691213,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1943.72,
+                "vol_supporto": 231.802,
+                "muro_resistenza": 1967.14,
+                "vol_resistenza": 313.158
+            },
+            "signal_quality": 1.2846483095710013
+        },
+        "timestamp": "2026-03-01T23:13:44.315064",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.01
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "SELL",
+        "prezzo_analisi": 1951.54,
+        "snapshot_mercato": {
+            "trade_velocity": 2.9134100058002805,
+            "cvd_reale": -531.62264706,
+            "whale_delta": 25.60072671,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1950.78,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1986.5842096086956,
+            "atr": 13.91285714285714,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.0107703354190192,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.134142175612082,
+            "book_pressure": 0.6933077018009763,
+            "vol_shock": 1.0838998052084017,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1942.55,
+                "volume": 1029.571,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1960.73,
+                "volume": 1020.028,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7857272991902851,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1942.55,
+                "vol_supporto": 1029.571,
+                "muro_resistenza": 1960.73,
+                "vol_resistenza": 1020.028
+            },
+            "signal_quality": 0.7863095052891719
+        },
+        "timestamp": "2026-03-01T23:14:32.343143",
+        "esito_verificato": true,
+        "esito_reale": "OCCASIONE_PERSA",
+        "pnl_potenziale": 1.02
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02947,
+        "snapshot_mercato": {
+            "trade_velocity": 0.027525280898685427,
+            "cvd_reale": 45.43615861000002,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02946,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.029653310131966315,
+            "atr": 9.571428571428578e-05,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06788866259334414,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.1377380073241081,
+            "book_pressure": 1.051362477213185,
+            "vol_shock": 0.9983348622765693,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 232.93398057000002,
+            "muro_supporto": {
+                "prezzo": 0.02911,
+                "volume": 229.66,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02999,
+                "volume": 230.571,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "8%"
+            },
+            "cvd_divergence": -0.8896309572552638,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02911,
+                "vol_supporto": 229.66,
+                "muro_resistenza": 0.02999,
+                "vol_resistenza": 230.571
+            },
+            "signal_quality": 1.1961750497998673
+        },
+        "timestamp": "2026-03-01T23:14:48.180689",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1947.19,
+        "snapshot_mercato": {
+            "trade_velocity": 1.7345953887142964,
+            "cvd_reale": -531.8044878399999,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1949.2,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1986.4864205434956,
+            "atr": 13.476428571428576,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03952488014208331,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.1839243712265115,
+            "book_pressure": 0.3713262058638597,
+            "vol_shock": 1.0489357683003588,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1941.16,
+                "volume": 128.789,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1956.88,
+                "volume": 1022.033,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7465086656509796,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1948.02,
+                "vol_supporto": 179.668,
+                "muro_resistenza": 1956.88,
+                "vol_resistenza": 1022.033
+            },
+            "signal_quality": 0.4396221447972963
+        },
+        "timestamp": "2026-03-01T23:15:46.081653",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.14
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02946,
+        "snapshot_mercato": {
+            "trade_velocity": 0.027248479960094656,
+            "cvd_reale": 45.43615861000002,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02946,
+            "vah": 0.02993,
+            "val": 0.0293,
+            "vwap": 0.029656850141447505,
+            "atr": 9.142857142857142e-05,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06788866259334414,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.1493274555685156,
+            "book_pressure": 1.1411726208081354,
+            "vol_shock": 0.9869190173766977,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 232.93398057000002,
+            "muro_supporto": {
+                "prezzo": 0.02913,
+                "volume": 230.017,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02999,
+                "volume": 230.571,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "20%"
+            },
+            "cvd_divergence": -0.873547701750048,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02913,
+                "vol_supporto": 230.017,
+                "muro_resistenza": 0.02999,
+                "vol_resistenza": 230.571
+            },
+            "signal_quality": 1.3115810246378687
+        },
+        "timestamp": "2026-03-01T23:15:59.905520",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1945.08,
+        "snapshot_mercato": {
+            "trade_velocity": 3.0937623826351164,
+            "cvd_reale": -290.59475828,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1943.96,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1985.9405990099415,
+            "atr": 13.854285714285718,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.028822448569940522,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.3573208947775521,
+            "book_pressure": 0.671847428769199,
+            "vol_shock": 1.0463919175725729,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1936.82,
+                "volume": 129.077,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1953.68,
+                "volume": 254.024,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7648271621684979,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1935.66,
+                "vol_supporto": 180.119,
+                "muro_resistenza": 1953.12,
+                "vol_resistenza": 1024.0
+            },
+            "signal_quality": 0.911912553171007
+        },
+        "timestamp": "2026-03-01T23:16:49.366180",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.03
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1938.31,
+        "snapshot_mercato": {
+            "trade_velocity": 0.6292056537471148,
+            "cvd_reale": 41.501789689999995,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1938.31,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1985.5645458864685,
+            "atr": 14.003571428571442,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.0005159798974227271,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.5206341539760697,
+            "book_pressure": 0.7784143049035125,
+            "vol_shock": 1.0573335720899912,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1928.29,
+                "volume": 206.463,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1947.31,
+                "volume": 1027.058,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.751787084223657,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1928.29,
+                "vol_supporto": 206.463,
+                "muro_resistenza": 1947.31,
+                "vol_resistenza": 1027.058
+            },
+            "signal_quality": 1.183683377979823
+        },
+        "timestamp": "2026-03-01T23:30:33.801989",
+        "esito_verificato": true,
+        "esito_reale": "SCELTA_CORRETTA",
+        "pnl_potenziale": -1.05
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02938,
+        "snapshot_mercato": {
+            "trade_velocity": 0.025680827816151462,
+            "cvd_reale": 41.38055526000003,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02938,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.02966469923468154,
+            "atr": 9.357142857142847e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06802721088436277,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.477106827110492,
+            "book_pressure": 1.2488722334041316,
+            "vol_shock": 0.9773258316022805,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 212.92859973,
+            "muro_supporto": {
+                "prezzo": 0.02905,
+                "volume": 233.129,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02972,
+                "volume": 230.052,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.8786118784786332,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02905,
+                "vol_supporto": 233.129,
+                "muro_resistenza": 0.02972,
+                "vol_resistenza": 230.052
+            },
+            "signal_quality": 1.8447177021499706
+        },
+        "timestamp": "2026-03-01T23:30:48.040854",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1920.23,
+        "snapshot_mercato": {
+            "trade_velocity": 0.6953945878971223,
+            "cvd_reale": -271.1246324399999,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1923.29,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1984.9475939795898,
+            "atr": 15.15142857142858,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03585719482409472,
+            "funding_rate_ext": 0.0,
+            "z_score": -2.0013191235950747,
+            "book_pressure": 0.8317148507022132,
+            "vol_shock": 1.077560137106736,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1912.67,
+                "volume": 231.842,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1939.86,
+                "volume": 318.244,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7894364123520987,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1915.49,
+                "vol_supporto": 1044.115,
+                "muro_resistenza": 1933.86,
+                "vol_resistenza": 1034.2
+            },
+            "signal_quality": 1.6645268360883616
+        },
+        "timestamp": "2026-03-01T23:35:14.890256",
+        "esito_verificato": true,
+        "esito_reale": "OCCASIONE_PERSA",
+        "pnl_potenziale": 1.03
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1917.05,
+        "snapshot_mercato": {
+            "trade_velocity": 0.7970282994563375,
+            "cvd_reale": -211.95160630000018,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1918.29,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1984.8658610736568,
+            "atr": 15.459285714285718,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.0380553209679615,
+            "funding_rate_ext": 0.0,
+            "z_score": -2.1582964541994416,
+            "book_pressure": 0.7356910281665991,
+            "vol_shock": 1.1019608558851202,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1910.64,
+                "volume": 191.037,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1934.75,
+                "volume": 318.979,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7981574504385959,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1909.11,
+                "vol_supporto": 1047.608,
+                "muro_resistenza": 1927.62,
+                "vol_resistenza": 1037.545
+            },
+            "signal_quality": 1.5878393374783124
+        },
+        "timestamp": "2026-03-01T23:37:04.533229",
+        "esito_verificato": true,
+        "esito_reale": "OCCASIONE_PERSA",
+        "pnl_potenziale": 1.05
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 4,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02949,
+        "snapshot_mercato": {
+            "trade_velocity": 0.025489283209886873,
+            "cvd_reale": 41.366265120000016,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02949,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.029664254286405914,
+            "atr": 0.00010357142857142832,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06791171477079519,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.0368380862055455,
+            "book_pressure": 1.115615391908548,
+            "vol_shock": 1.0477561531977573,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 212.92859973,
+            "muro_supporto": {
+                "prezzo": 0.02909,
+                "volume": 229.09,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02978,
+                "volume": 230.114,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.8466130522035686,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02909,
+                "vol_supporto": 229.09,
+                "muro_resistenza": 0.02978,
+                "vol_resistenza": 230.114
+            },
+            "signal_quality": 1.1567125278879087
+        },
+        "timestamp": "2026-03-01T23:38:03.384669",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1929.09,
+        "snapshot_mercato": {
+            "trade_velocity": 0.3889178904625633,
+            "cvd_reale": -4.149368269999995,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1929.09,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1985.0886695096433,
+            "atr": 14.89928571428574,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.0005183683836750714,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.7852001491776104,
+            "book_pressure": 1.1662907399412994,
+            "vol_shock": 1.0502905055688865,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1920.39,
+                "volume": 1041.454,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1939.06,
+                "volume": 1031.428,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7774096343432636,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1920.39,
+                "vol_supporto": 1041.454,
+                "muro_resistenza": 1939.06,
+                "vol_resistenza": 1031.428
+            },
+            "signal_quality": 2.082062402927673
+        },
+        "timestamp": "2026-03-01T23:45:35.938560",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02949,
+        "snapshot_mercato": {
+            "trade_velocity": 0.02417056092259683,
+            "cvd_reale": 42.19992935000002,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02949,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.029667702106946636,
+            "atr": 9.928571428571396e-05,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06777363605557161,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.051917533186742,
+            "book_pressure": 1.1000268831657616,
+            "vol_shock": 1.0126184588053246,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 205.15856703000003,
+            "muro_supporto": {
+                "prezzo": 0.02913,
+                "volume": 228.992,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02983,
+                "volume": 229.483,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.8120316826816751,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02913,
+                "vol_supporto": 228.992,
+                "muro_resistenza": 0.02983,
+                "vol_resistenza": 229.483
+            },
+            "signal_quality": 1.1571375653788285
+        },
+        "timestamp": "2026-03-01T23:45:49.555544",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1922.0,
+        "snapshot_mercato": {
+            "trade_velocity": 0.45546547100667745,
+            "cvd_reale": -275.81441780000023,
+            "whale_delta": -30.3,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1920.97,
+            "vah": 2045.21,
+            "val": 1919.382,
+            "vwap": 1983.1045623229472,
+            "atr": 14.600714285714291,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.013016020117560692,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.9926635451055326,
+            "book_pressure": 1.168046673824346,
+            "vol_shock": 0.8555172438788986,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1912.29,
+                "volume": 1045.867,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1929.34,
+                "volume": 1036.621,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7607882938266513,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1912.29,
+                "vol_supporto": 1045.867,
+                "muro_resistenza": 1929.34,
+                "vol_resistenza": 1036.621
+            },
+            "signal_quality": 2.327524025911547
+        },
+        "timestamp": "2026-03-02T00:01:43.834855",
+        "esito_verificato": true,
+        "esito_reale": "OCCASIONE_PERSA",
+        "pnl_potenziale": 1.11
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 4,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02944,
+        "snapshot_mercato": {
+            "trade_velocity": 0.022739306574724904,
+            "cvd_reale": 51.133160670000024,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02941,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.029672603369451333,
+            "atr": 9.99999999999999e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06802721088436277,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.3946317237329224,
+            "book_pressure": 1.212247816345288,
+            "vol_shock": 0.8711545813848299,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 190.69286366,
+            "muro_supporto": {
+                "prezzo": 0.02908,
+                "volume": 231.392,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02983,
+                "volume": 230.845,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.7634262706003065,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02908,
+                "vol_supporto": 231.392,
+                "muro_resistenza": 0.02983,
+                "vol_resistenza": 230.845
+            },
+            "signal_quality": 1.6906392617011003
+        },
+        "timestamp": "2026-03-02T00:02:00.265776",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1927.92,
+        "snapshot_mercato": {
+            "trade_velocity": 0.4317915288314932,
+            "cvd_reale": -211.14418095999997,
+            "whale_delta": -30.3,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1929.41,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1983.1020959453808,
+            "atr": 14.915714285714298,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06996486209149003,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.732255179077807,
+            "book_pressure": 1.1882323526459986,
+            "vol_shock": 0.8787238913957123,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1919.93,
+                "volume": 1041.703,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1937.04,
+                "volume": 1032.5,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7391300842967821,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1919.93,
+                "vol_supporto": 1171.916,
+                "muro_resistenza": 1937.04,
+                "vol_resistenza": 1032.5
+            },
+            "signal_quality": 2.058321646818838
+        },
+        "timestamp": "2026-03-02T00:02:40.246848",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 4,
+        "direzione": "SELL",
+        "prezzo_analisi": 1942.83,
+        "snapshot_mercato": {
+            "trade_velocity": 0.8292112512557012,
+            "cvd_reale": 52.61331099000002,
+            "whale_delta": 25.86396974,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1940.78,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1982.9849815195819,
+            "atr": 15.874285714285715,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.035568660401762306,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.375590043481798,
+            "book_pressure": 1.0577802127992781,
+            "vol_shock": 0.9607821229847257,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1931.65,
+                "volume": 1035.38,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1949.63,
+                "volume": 1025.834,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.7005240306196192,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1931.65,
+                "vol_supporto": 1035.38,
+                "muro_resistenza": 1949.63,
+                "vol_resistenza": 1025.834
+            },
+            "signal_quality": 1.4550719289187446
+        },
+        "timestamp": "2026-03-02T00:06:31.037364",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "BUY",
+        "prezzo_analisi": 1947.89,
+        "snapshot_mercato": {
+            "trade_velocity": 0.6458912956715714,
+            "cvd_reale": 35.41640880999997,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1947.89,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1982.9850973688544,
+            "atr": 16.235714285714298,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.0025679083359533826,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.1496530728307777,
+            "book_pressure": 1.0680108607030783,
+            "vol_shock": 1.032317464000105,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1938.15,
+                "volume": 1061.809,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1955.94,
+                "volume": 1022.522,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.67130407867666,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1938.15,
+                "vol_supporto": 1031.908,
+                "muro_resistenza": 1955.94,
+                "vol_resistenza": 1022.522
+            },
+            "signal_quality": 1.2278419678239376
+        },
+        "timestamp": "2026-03-02T00:10:21.284124",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 5,
+        "direzione": "SELL",
+        "prezzo_analisi": 1937.75,
+        "snapshot_mercato": {
+            "trade_velocity": 0.4274674007638135,
+            "cvd_reale": -112.56912694000005,
+            "whale_delta": -37.66830366,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1937.75,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1982.7327893573142,
+            "atr": 16.235714285714298,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.01858026156879999,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.4712347797872078,
+            "book_pressure": 1.0188127994846443,
+            "vol_shock": 0.9342689853510723,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1930.46,
+                "volume": 165.786,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1939.26,
+                "volume": 129.464,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.7118337999460866,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1930.46,
+                "vol_supporto": 165.786,
+                "muro_resistenza": 1939.26,
+                "vol_resistenza": 129.464
+            },
+            "signal_quality": 1.4989128246941794
+        },
+        "timestamp": "2026-03-02T00:14:07.262812",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 5,
+        "direzione": "SELL",
+        "prezzo_analisi": 0.02949,
+        "snapshot_mercato": {
+            "trade_velocity": 0.021075707391190364,
+            "cvd_reale": 59.48657659000002,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02949,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.029672151014379415,
+            "atr": 9.99999999999999e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.06795786612300096,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.0682709546575548,
+            "book_pressure": 1.0820674892824742,
+            "vol_shock": 0.8507984937541532,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 190.69286366,
+            "muro_supporto": {
+                "prezzo": 0.02912,
+                "volume": 229.821,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02978,
+                "volume": 231.031,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.7330470187290634,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02912,
+                "vol_supporto": 229.821,
+                "muro_resistenza": 0.02978,
+                "vol_resistenza": 231.031
+            },
+            "signal_quality": 1.1559412697796922
+        },
+        "timestamp": "2026-03-02T00:14:20.433878",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 6,
+        "direzione": "SELL",
+        "prezzo_analisi": 1939.0,
+        "snapshot_mercato": {
+            "trade_velocity": 0.37597270631686064,
+            "cvd_reale": -119.59688282000006,
+            "whale_delta": -37.66830366,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1937.23,
+            "vah": 2045.21,
+            "val": 1945.872,
+            "vwap": 1982.7872815334192,
+            "atr": 16.050000000000004,
+            "squeeze": "OFF",
+            "fvg": "BULL_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.048047117172972914,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.4655867255929464,
+            "book_pressure": 0.8102090374608859,
+            "vol_shock": 0.9396503571270213,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1928.46,
+                "volume": 1037.096,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1945.44,
+                "volume": 1028.045,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.6172180673397317,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1929.25,
+                "vol_supporto": 130.084,
+                "muro_resistenza": 1945.44,
+                "vol_resistenza": 1028.045
+            },
+            "signal_quality": 1.1874316102581126
+        },
+        "timestamp": "2026-03-02T00:15:45.541857",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 4,
+        "direzione": "SELL",
+        "prezzo_analisi": 0.02943,
+        "snapshot_mercato": {
+            "trade_velocity": 0.02085959806801591,
+            "cvd_reale": 62.136682970000024,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02943,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.029682476230482726,
+            "atr": 0.00010142857142857126,
+            "squeeze": "OFF",
+            "fvg": "BEAR_GAP",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03399048266485245,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.331390244995231,
+            "book_pressure": 1.0596525415721845,
+            "vol_shock": 0.8558618956077221,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 170.04022916000002,
+            "muro_supporto": {
+                "prezzo": 0.02911,
+                "volume": 229.675,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "16%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02975,
+                "volume": 229.502,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.6705084930915246,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02911,
+                "vol_supporto": 229.675,
+                "muro_resistenza": 0.02975,
+                "vol_resistenza": 229.502
+            },
+            "signal_quality": 1.4108110569336099
+        },
+        "timestamp": "2026-03-02T00:16:00.054313",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHZUSD",
+        "score": 5,
+        "direzione": "BUY",
+        "prezzo_analisi": 1932.27,
+        "snapshot_mercato": {
+            "trade_velocity": 0.18531330752800454,
+            "cvd_reale": -46.05862567000002,
+            "whale_delta": 0,
+            "poc": 2015.409,
+            "high_24h": 2054.51,
+            "low_24h": 1907.66,
+            "close": 1931.85,
+            "vah": 2045.21,
+            "val": 1932.628,
+            "vwap": 1982.9036066788292,
+            "atr": 14.61714285714288,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.010871928680149742,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.600425227917355,
+            "book_pressure": 0.8828959789603639,
+            "vol_shock": 0.9412458817209469,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": -5190.544682119999,
+            "muro_supporto": {
+                "prezzo": 1931.04,
+                "volume": 145.246,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "muro_resistenza": {
+                "prezzo": 1940.96,
+                "volume": 137.49,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": 0.5376365435619166,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 1926.86,
+                "vol_supporto": 129.745,
+                "muro_resistenza": 1934.06,
+                "vol_resistenza": 143.074
+            },
+            "signal_quality": 1.4130089983549565
+        },
+        "timestamp": "2026-03-02T00:30:41.763222",
+        "esito_verificato": false
+    },
+    {
+        "type": "GHOST_ANALYSIS",
+        "asset": "XETHXXBT",
+        "score": 5,
+        "direzione": "BUY",
+        "prezzo_analisi": 0.02946,
+        "snapshot_mercato": {
+            "trade_velocity": 0.019399196458691335,
+            "cvd_reale": 62.87323646000001,
+            "whale_delta": 0,
+            "poc": 0.02932,
+            "high_24h": 0.03017,
+            "low_24h": 0.02926,
+            "close": 0.02946,
+            "vah": 0.03006,
+            "val": 0.0293,
+            "vwap": 0.0296879034477316,
+            "atr": 9.214285714285711e-05,
+            "squeeze": "OFF",
+            "fvg": "NONE",
+            "absorption": "NORMAL",
+            "spread_perc": 0.03396739130434644,
+            "funding_rate_ext": 0.0,
+            "z_score": -1.226455216927438,
+            "book_pressure": 1.094673610351587,
+            "vol_shock": 0.849090004090024,
+            "liquidazioni_24h": 0,
+            "open_interest": 0,
+            "funding_z_score": -2.0,
+            "delta_poc": 159.82598629,
+            "muro_supporto": {
+                "prezzo": 0.02913,
+                "volume": 230.455,
+                "stato": "VERO_MURO_ISTITUZIONALE",
+                "affidabilita": "100%"
+            },
+            "muro_resistenza": {
+                "prezzo": 0.02978,
+                "volume": 229.912,
+                "stato": "POSSIBILE_SPOOFING_FAKE",
+                "affidabilita": "10%"
+            },
+            "cvd_divergence": -0.5598913551714382,
+            "macro_proxy": {
+                "eth_btc_ratio": 0.07,
+                "market_liquidity_warning": false
+            },
+            "put_call_ratio": 1.0,
+            "liquidity_walls": {
+                "muro_supporto": 0.02913,
+                "vol_supporto": 230.455,
+                "muro_resistenza": 0.02978,
+                "vol_resistenza": 229.912
+            },
+            "signal_quality": 1.3425681602484976
+        },
+        "timestamp": "2026-03-02T00:30:54.838077",
+        "esito_verificato": false
+    }
+]

@@ -1,0 +1,24 @@
+{
+    "XXBTZUSD": {
+        "asset": "XXBTZUSD",
+        "direzione": "BUY",
+        "p_entrata": 65383.4,
+        "size": 0.0001,
+        "leverage": 5,
+        "sl": 65383.4,
+        "sl_id": "OKDHJR-EW2QU-5HEJPN",
+        "tp": 66559.0,
+        "tp_id": "OQIL4U-ZVFO6-57BJ5U",
+        "fase": 0,
+        "data_apertura": "2026-03-01T23:45:19.740768",
+        "voto_ia": 7,
+        "snapshot_mercato": {
+            "z_score": -2.036393658417982,
+            "cvd_divergence": 0.6731589842515806,
+            "funding_z_score": -2.0,
+            "book_pressure": 0.9714883038388603,
+            "atr": 335.8857142857128
+        },
+        "fase_protezione": "BREAKEVEN"
+    }
+}
