@@ -105,16 +105,76 @@ class TradeManager:
     def sincronizza_con_exchange(self, engine=None):
         """ 
         Sincronizza JSON con Kraken e pulisce ordini orfani. 
-        GERARCHIA: Se la posizione non esiste su Kraken, pulisce tutto (JSON e Ordini).
+        Se l'Engine fornisce dati a 0, applica protezioni statistiche di emergenza.
         """
         self.logger.info("🔄 Avvio sincronizzazione istituzionale JSON <-> Kraken...")
         try:
             # 1. Recupero posizioni reali da Kraken
             posizioni_real = self.performer.get_open_positions_real()
-            # Lista ticker reali presenti (es. ['XXBTZUSD', 'XETHZUSD'])
             ticker_reali = [p.get('pair') for p in posizioni_real.values() if p.get('pair')]
             
-            # 2. Pulizia Database Locale (JSON)
+            # --- 2. RIPARAZIONE: Se Kraken ha posizioni che il JSON non ha ---
+            for txid, p_kraken in posizioni_real.items():
+                symbol_kraken = p_kraken.get('pair')
+                asset_interno = symbol_kraken 
+                
+                if asset_interno not in self.posizioni_aperte:
+                    self.logger.warning(f"🔧 Riparazione: Posizione {asset_interno} trovata su Kraken ma assente nel JSON.")
+                    
+                    costo = float(p_kraken.get('cost', 0))
+                    volume = float(p_kraken.get('vol', 0))
+                    p_entry = costo / volume if volume > 0 else 0
+                    direzione = 'LONG' if p_kraken.get('type') == 'buy' else 'SHORT'
+                    
+                    # Recupero leva reale
+                    leverage_reale = int(float(p_kraken.get('margin', 0)) / costo) if costo > 0 else 1
+                    if leverage_reale < 1: leverage_reale = 1
+
+                    # --- RECUPERO DATI ENGINE ---
+                    sl_da_applicare = 0
+                    tp_da_applicare = 0
+                    
+                    if engine:
+                        try:
+                            # Chiediamo all'Engine i livelli (CVD, Price Velocity, etc.)
+                            analisi = engine.analizza_asset(asset_interno)
+                            sl_da_applicare = float(analisi.get('sl', 0))
+                            tp_da_applicare = float(analisi.get('tp', 0))
+                        except Exception as e:
+                            self.logger.error(f"⚠️ Errore Engine per {asset_interno}: {e}")
+
+                    # --- CHECK DATI A ZERO (PARACADUTE) ---
+                    # Se l'engine non dà dati, usiamo lo 2% SL e 5% TP come rete di sicurezza
+                    if sl_da_applicare == 0:
+                        molt_sl = 0.98 if direzione == 'LONG' else 1.02
+                        sl_da_applicare = float(self.formatta_prezzo(asset_interno, p_entry * molt_sl))
+                        self.logger.warning(f"🚨 Engine a 0. SL emergenza (2%) per {asset_interno}: {sl_da_applicare}")
+
+                    if tp_da_applicare == 0:
+                        molt_tp = 1.05 if direzione == 'LONG' else 0.95
+                        tp_da_applicare = float(self.formatta_prezzo(asset_interno, p_entry * molt_tp))
+                        self.logger.warning(f"🚨 Engine a 0. TP emergenza (5%) per {asset_interno}: {tp_da_applicare}")
+
+                    # Creiamo l'entry nel JSON con dati validi
+                    self.posizioni_aperte[asset_interno] = {
+                        'asset': asset_interno,
+                        'direzione': direzione,
+                        'p_entrata': p_entry,
+                        'size': volume,
+                        'leverage': leverage_reale,
+                        'sl': sl_da_applicare,
+                        'tp': tp_da_applicare,
+                        'fase': 0,
+                        'data_apertura': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        'nota': "RECUPERATA_DA_KRAKEN"
+                    }
+                    self.salva_posizioni()
+                    
+                    # Ora sincronizza_e_ripara troverà dati > 0 e invierà gli ordini mancanti
+                    self.logger.info(f"🛡️ Trigger sincronizza_e_ripara per {asset_interno}...")
+                    self.sincronizza_e_ripara(asset_interno)
+
+            # 3. Pulizia Database Locale
             orfane_json = []
             for asset_json in list(self.posizioni_aperte.keys()):
                 symbol_kraken = al_config.get_ticker(asset_json)
@@ -122,117 +182,101 @@ class TradeManager:
                     orfane_json.append(asset_json)
             
             for asset in orfane_json:
-                self.logger.warning(f"🧹 Asset {asset} non più a mercato su Kraken. Pulizia locale...")
-                # Chiudiamo statisticamente per salvare il trade nel diario prima di rimuoverlo
+                self.logger.warning(f"🧹 Asset {asset} non più su Kraken. Pulizia locale...")
                 self._chiudi_statisticamente(asset)
             
-            if orfane_json:
+            if orfane_json or (len(posizioni_real) > 0):
                 self.salva_posizioni()
 
-            # 3. Pulizia Ordini Orfani su Kraken (SL/TP rimasti appesi senza posizione)
-            # Usiamo ASSET_CONFIG per iterare su tutti gli asset monitorati
+            # 4. Pulizia Ordini Orfani
             for asset in al_config.ASSET_CONFIG.keys():
                 symbol_kraken = al_config.get_ticker(asset)
-                
-                # Se l'asset NON ha una posizione aperta, forziamo la pulizia degli ordini
-                if symbol_kraken not in ticker_reali:
-                    self.logger.info(f"🛡️ Nessuna posizione per {asset}. Verifico pulizia ordini orfani...")
+                if symbol_kraken not in ticker_reali and asset not in self.posizioni_aperte:
                     self.performer.pulizia_totale_ordini(asset)
-
-            self.logger.info(f"✅ Sincronizzazione conclusa con successo.")
             
         except Exception as e:
-            self.logger.error(f"❌ Errore durante sincronizzazione: {e}")    
+            self.logger.error(f"❌ Errore durante sincronizzazione: {e}")
+            import traceback
+            traceback.print_exc()
     def is_posizione_aperta_su_kraken(self, asset):
-        """
-        Verifica l'esistenza reale su Kraken. 
-        Se chiusa esternamente, sincronizza il JSON statistico e pulisce la memoria.
-        """
+        """ Verifica l'esistenza reale su Kraken e sincronizza se chiusa fuori dal bot. """
         try:
-            # 1. Recupero stato reale (sempre con il nuovo metodo normalizzato)
             posizioni_reali = self.performer.get_open_positions_real()
             symbol_kraken = al_config.get_ticker(asset)
-            
-            # Controllo se l'asset è presente tra le posizioni di Kraken
             is_reale = any(p.get('pair') == symbol_kraken for p in posizioni_reali.values())
             
-            # --- SINCRONIZZAZIONE STATISTICA (Se chiusa fuori dal bot) ---
             if asset in self.posizioni_aperte and not is_reale:
-                self.logger.warning(f"🔄 Chiusura rilevata su Kraken per {asset}. Sincronizzazione in corso...")
-                
-                # Usiamo il metodo dedicato per non ripetere la logica del PNL
-                # Questo calcola il PNL attuale, registra lo storico e rimuove dal JSON
+                self.logger.warning(f"🔄 Chiusura rilevata su Kraken per {asset}. Sincronizzazione...")
                 self._chiudi_statisticamente(asset)
                 return False
-                
             return is_reale
-
         except Exception as e:
             self.logger.error(f"❌ Errore verifica esistenza reale {asset}: {e}")
-            # In caso di errore API, per sicurezza diciamo che è aperta per non perdere i dati
             return asset in self.posizioni_aperte
     
     def sincronizza_e_ripara(self, asset):
         """
-        Controlla Kraken e allinea il JSON. 
-        Prende i dati reali (Price, Size, IDs) e li scrive nel JSON.
+        Allinea il JSON ai dati reali di Kraken e ripristina SL/TP.
+        Se i valori sono a 0 (recupero), imposta protezioni di emergenza.
         """
         try:
-            # 1. Recupero stato reale da Kraken (La fonte della verità)
             posizioni_reali = self.performer.get_open_positions_real()
             symbol_kraken = al_config.get_ticker(asset)
-            
-            # Troviamo la posizione specifica arricchita dai dati del performer
             dati_kraken = next((p for p in posizioni_reali.values() if p.get('pair') == symbol_kraken), None)
             is_reale = dati_kraken is not None
 
-            # --- CASO A: CHIUSURA ESTERNA ---
             if asset in self.posizioni_aperte and not is_reale:
-                self.logger.warning(f"🔄 {asset} chiusa su Kraken. Sincronizzo diario statistico...")
                 self._chiudi_statisticamente(asset)
                 return False
 
-            # --- CASO B: POSIZIONE APERTA (SINCRONIZZAZIONE DATI REALI) ---
             if is_reale and asset in self.posizioni_aperte:
                 pos_stat = self.posizioni_aperte[asset]
                 cambiamento = False
 
-                # 1. Allineamento Prezzo e Size (Se Kraken dice diverso, aggiorniamo il JSON)
+                # 1. Allineamento Prezzo/Size
                 p_reale = float(dati_kraken.get('price', pos_stat['p_entrata']))
                 s_reale = float(dati_kraken.get('vol', pos_stat['size']))
-                
                 if pos_stat['p_entrata'] != p_reale or pos_stat['size'] != s_reale:
-                    pos_stat['p_entrata'] = p_reale
-                    pos_stat['size'] = s_reale
+                    pos_stat['p_entrata'], pos_stat['size'] = p_reale, s_reale
                     cambiamento = True
 
-                # 2. Recupero/Ripristino ID REALE Take Profit
+                # 2. GESTIONE PROTEZIONI (Emergenza se a 0)
+                # Se nel JSON è 0, calcoliamo valori di default per non restare scoperti
+                if pos_stat.get('sl', 0) == 0:
+                    moltiplicatore = 0.98 if pos_stat['direzione'] == 'LONG' else 1.02
+                    pos_stat['sl'] = float(self.formatta_prezzo(asset, p_reale * moltiplicatore))
+                    self.logger.warning(f"🚨 SL emergenza (2%) impostato per {asset}: {pos_stat['sl']}")
+                    cambiamento = True
+
+                if pos_stat.get('tp', 0) == 0:
+                    moltiplicatore = 1.05 if pos_stat['direzione'] == 'LONG' else 0.95
+                    pos_stat['tp'] = float(self.formatta_prezzo(asset, p_reale * moltiplicatore))
+                    self.logger.warning(f"🚨 TP emergenza (5%) impostato per {asset}: {pos_stat['tp']}")
+                    cambiamento = True
+
+                # 3. Allineamento Take Profit su Kraken
                 if dati_kraken.get('has_tp'):
-                    id_tp_vero = dati_kraken.get('tp_id_kraken')
-                    if pos_stat.get('tp_id') != id_tp_vero:
-                        self.logger.info(f"🔍 Recuperato ID TP REALE per {asset}: {id_tp_vero}")
-                        pos_stat['tp_id'] = id_tp_vero
+                    id_tp = dati_kraken.get('tp_id_kraken')
+                    if pos_stat.get('tp_id') != id_tp:
+                        pos_stat['tp_id'] = id_tp
                         cambiamento = True
-                elif pos_stat.get('tp', 0) > 0:
-                    # SE MANCA SU KRAKEN MA È NEL JSON -> REINVIO
+                else:
                     tp_f = self.formatta_prezzo(asset, pos_stat['tp'])
-                    self.logger.warning(f"🎯 TP assente su Kraken per {asset}! Reinvio...")
+                    self.logger.info(f"🛰️ Invio ordine TP per {asset}: {tp_f}")
                     res_tp = self.performer.gestisci_ordine_protezione(asset, 'take-profit', tp_f, pos_stat['direzione'], pos_stat['size'], pos_stat['leverage'])
                     if res_tp and isinstance(res_tp, dict):
                         pos_stat['tp_id'] = res_tp.get('id')
                         cambiamento = True
 
-                # 3. Recupero/Ripristino ID REALE Stop Loss
+                # 4. Allineamento Stop Loss su Kraken
                 if dati_kraken.get('has_sl'):
-                    id_sl_vero = dati_kraken.get('sl_id_kraken')
-                    if pos_stat.get('sl_id') != id_sl_vero:
-                        self.logger.info(f"🔍 Recuperato ID SL REALE per {asset}: {id_sl_vero}")
-                        pos_stat['sl_id'] = id_sl_vero
+                    id_sl = dati_kraken.get('sl_id_kraken')
+                    if pos_stat.get('sl_id') != id_sl:
+                        pos_stat['sl_id'] = id_sl
                         cambiamento = True
-                elif pos_stat.get('sl', 0) > 0:
-                    # SE MANCA SU KRAKEN MA È NEL JSON -> REINVIO
+                else:
                     sl_f = self.formatta_prezzo(asset, pos_stat['sl'])
-                    self.logger.warning(f"🛡️ SL assente su Kraken per {asset}! Reinvio...")
+                    self.logger.info(f"🛰️ Invio ordine SL per {asset}: {sl_f}")
                     res_sl = self.performer.gestisci_ordine_protezione(asset, 'stop-loss', sl_f, pos_stat['direzione'], pos_stat['size'], pos_stat['leverage'])
                     if res_sl and isinstance(res_sl, dict):
                         pos_stat['sl_id'] = res_sl.get('id')
@@ -240,15 +284,11 @@ class TradeManager:
 
                 if cambiamento:
                     self.salva_posizioni()
-                
                 return True
-
             return is_reale
-
         except Exception as e:
-            self.logger.error(f"❌ Errore sincronizzazione/riparo {asset}: {e}")
+            self.logger.error(f"❌ Errore critico riparazione {asset}: {e}")
             return asset in self.posizioni_aperte
-    
     def _chiudi_statisticamente(self, asset):
         """ Sposta la posizione dalle aperte allo storico calcolando il PNL finale. """
         try:
@@ -286,7 +326,7 @@ class TradeManager:
     def apri_posizione(self, asset, direzione, entry_price, size, sl, tp, voto, leverage, dati_mercato):
         """ 
         Apertura posizione reale sincronizzata con la Gerarchia di Comando.
-        Rimosso il Veto 1.2%: ora ci si fida dei muri istituzionali dell'Engine.
+        INTERROGAZIONE KRAKEN POST-ORDINE: Popola il JSON solo con dati reali eseguiti.
         """
         try:
             # 1. Check reale su Kraken (Fonte della Verità)
@@ -294,20 +334,19 @@ class TradeManager:
                 self.logger.info(f"⏩ {asset} già aperta su Kraken. Salto l'apertura.")
                 return False
 
-            # --- 2. SINCRONIZZAZIONE SL (Sostituisce il vecchio Veto) ---
-            # Se il Brain non ha mandato uno SL, ne mettiamo uno di emergenza (2%)
+            # 2. SINCRONIZZAZIONE SL (Logica originale mantenuta)
             if not sl or sl == 0:
                 distanza_emergenza = entry_price * 0.02
                 sl = entry_price - distanza_emergenza if direzione.upper() == "BUY" else entry_price + distanza_emergenza
                 self.logger.warning(f"⚠️ SL mancante dal Brain per {asset}! Impostato SL emergenza 2%: {sl}")
 
-            # 3. Recupero Configurazione Specifica dalla Asset List (al_config)
+            # 3. Recupero Configurazione Specifica (al_config)
             conf = al_config.ASSET_CONFIG.get(asset, {})
             if not conf:
                 self.logger.error(f"❌ Asset {asset} NON TROVATO in ASSET_CONFIG!")
                 return False
 
-            # 4. Sizing Istituzionale (Valore nominale 100$)
+            # 4. Sizing Istituzionale (Logica originale mantenuta)
             valore_nominale_target = 100.0 
             
             if conf.get('is_cross'):
@@ -334,36 +373,49 @@ class TradeManager:
 
             self.logger.info(f"💰 Sizing: {valore_nominale_target}$ | SL: {sl} | Voto: {voto} | Leva: {leva_da_usare}x")
 
-            # 6. Esecuzione REALE (Senza veti, esecuzione diretta della Gerarchia)
+            # 6. Esecuzione REALE
             risultato = self.performer.esegui_ordine(
                 asset=asset, direzione=direzione, size=size_istituzionale,
                 leverage=leva_da_usare, voto=voto, sl=sl, tp=tp
             )
 
             if risultato and risultato.get('success'):
-                # Registrazione in posizioni_aperte.json
-                order_id_real = risultato.get('order_id')
-                sl_id_real = risultato.get('sl_id')
-                tp_id_real = risultato.get('tp_id') 
+                # --- SINCRONIZZAZIONE DATI REALI POST-ESECUZIONE ---
+                # Attendiamo un istante per permettere a Kraken di registrare la posizione
+                time.sleep(1.0)
+                
+                posizioni_reali = self.performer.get_open_positions_real()
+                symbol_kraken = al_config.get_ticker(asset)
+                dati_kraken = next((p for p in posizioni_reali.values() if p.get('pair') == symbol_kraken), None)
 
+                # Se troviamo i dati reali su Kraken, usiamo quelli. Altrimenti fallback sui dati stimati.
+                p_entrata_finale = float(dati_kraken.get('price', entry_price)) if dati_kraken else entry_price
+                size_finale = float(dati_kraken.get('vol', size_istituzionale)) if dati_kraken else size_istituzionale
+                
+                oid = risultato.get('order_id')
+                sid = risultato.get('sl_id')
+                tid = risultato.get('tp_id')
+
+                # Registrazione nel JSON con i dati confermati da Kraken
                 self.posizioni_aperte[asset] = {
                     'asset': asset,
                     'direzione': direzione.upper(),
-                    'ordine_id': order_id_real,
-                    'p_entrata': entry_price,
-                    'size': size_istituzionale,
+                    'ordine_id': oid,
+                    'p_entrata': p_entrata_finale, # DATO REALE KRAKEN
+                    'size': size_finale,           # DATO REALE KRAKEN
                     'leverage': leva_da_usare,
                     'sl': sl,
                     'tp': tp,
                     'voto_ia': voto,
                     'data_apertura': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'fase': 0, 
-                    'sl_id': sl_id_real,
-                    'tp_id': tp_id_real 
+                    'sl_id': sid,
+                    'tp_id': tid,
+                    'chimera_snapshot': dati_mercato
                 }
                 
                 self.salva_posizioni()
-                self.logger.info(f"✅ REGISTRAZIONE COMPLETA {asset}: Entry={order_id_real}, SL={sl_id_real}, TP={tp_id_real}")
+                self.logger.info(f"✅ REGISTRAZIONE REALE COMPLETATA {asset}: Entry={oid}, Price={p_entrata_finale}")
                 return True
                 
             return False
@@ -439,37 +491,39 @@ class TradeManager:
         # --- FASE 2: 85% PROFITTO -> RIMOZIONE TP + TRAILING STOP ---
         elif progresso_percentuale >= 80:
             if fase_attuale < 2:
-                self.logger.warning(f"🚀 {asset} all'85%! Attivazione Trailing...")
-                nuovo_sl_trail = p_entrata + (distanza_totale * 0.5) if direzione == "BUY" else p_entrata - (distanza_totale * 0.5)
+                self.logger.warning(f"🚀 {asset} all'85%! Transizione a Phase Two...")
                 
-                # [CHIRURGICO] CANCELLAZIONE SL E TP TRAMITE ID
-                sl_id_f2 = pos.get('sl_id')
+                # [CHIRURGICO] CANCELLAZIONE TP E SL VECCHIO
                 tp_id_f2 = pos.get('tp_id')
+                sl_id_f2 = pos.get('sl_id')
                 
-                if sl_id_f2: self.performer.cancella_ordine_specifico(sl_id_f2)
-                if tp_id_f2: self.performer.cancella_ordine_specifico(tp_id_f2)
+                # Cancelliamo tutto prima di inviare il nuovo
+                tp_deleted = self.performer.cancella_ordine_specifico(tp_id_f2) if tp_id_f2 else True
+                sl_deleted = self.performer.cancella_ordine_specifico(sl_id_f2) if sl_id_f2 else True
                 
-                # Se uno dei due ID mancava, forziamo pulizia asset per evitare TP orfani
-                if not sl_id_f2 or not tp_id_f2:
-                    self.performer.pulizia_totale_ordini(asset)
-                
-                time.sleep(1.5)
+                if tp_deleted and sl_deleted:
+                    # Delay per pulizia engine Kraken
+                    time.sleep(1.2) 
+                    
+                    nuovo_sl_trail = p_entrata + (distanza_totale * 0.5) if direzione == "BUY" else p_entrata - (distanza_totale * 0.5)
+                    nuovo_sl_trail = float(self.performer.qprice(symbol_kraken, nuovo_sl_trail))
 
-                risultato_f2 = self.performer.gestisci_ordine_protezione(
-                    asset=asset, 
-                    tipo_protezione='stop-loss', 
-                    prezzo=nuovo_sl_trail, 
-                    direzione_aperta=direzione, 
-                    size_fallback=pos['size'], 
-                    leverage=pos['leverage']
-                )
+                    risultato_f2 = self.performer.gestisci_ordine_protezione(
+                        asset=asset, 
+                        tipo_protezione='stop-loss', 
+                        prezzo=nuovo_sl_trail, 
+                        direzione_aperta=direzione, 
+                        size_fallback=pos['size'], 
+                        leverage=pos['leverage']
+                    )
 
-                if risultato_f2 and risultato_f2.get('success'):
-                    pos['fase'] = 2
-                    pos['tp'] = 0 
-                    pos['sl'] = nuovo_sl_trail
-                    pos['tp_id'] = None
-                    pos['sl_id'] = risultato_f2.get('id')
+                    if risultato_f2 and risultato_f2.get('success'):
+                        pos['fase'] = 2
+                        pos['tp'] = 0 
+                        pos['sl'] = nuovo_sl_trail
+                        pos['tp_id'] = None
+                        pos['sl_id'] = risultato_f2.get('id')
+                        self.salva_posizioni()
                     
                     self.salva_posizioni()
                     if self.alerts: self.alerts.invia_alert(f"🚀 *DYNAMIC MODE {asset}*\n85% raggiunto: TP rimosso, SL al 50% profitto.")

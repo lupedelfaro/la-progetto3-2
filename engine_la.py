@@ -3,17 +3,18 @@
 L&A Institutional Bot - EngineLA
 Versione 2.3: Fix "Truth value of a Series" e ottimizzazione confronti.
 """
-import ccxt
-import pandas as pd
-import numpy as np
 import logging
 import time
 import requests
-from core import asset_list
-from core import config_la
-from core import asset_list as al_config
+import pandas as pd
+import ccxt
+import numpy as np
+# IMPORTAZIONE CORRETTA: Prendiamo la funzione specifica dal file asset_list
+from core.asset_list import get_ticker, get_config 
+
 class EngineLA:
     def __init__(self, api_key=None, api_secret=None):
+        # ... (il tuo codice init rimane uguale)
         self.api_key = api_key or config_la.KRAKEN_KEY
         self.api_secret = api_secret or config_la.KRAKEN_SECRET
         self.exchange = ccxt.kraken({
@@ -22,15 +23,17 @@ class EngineLA:
             'enableRateLimit': True
         })
         self.logger = logging.getLogger("EngineLA")
-        self._wall_history = {} # Memorizza {ticker: {prezzo: timestamp_inizio}}
-        
+        self._wall_history = {} 
+        self._last_hurst = 0.5
+    
+    
     def check_sentinel(self, ticker):
         """
         SENTINELLA ISTITUZIONALE (Lightweight)
         Monitora anomalie di Prezzo, Volume e Open Interest ogni minuto.
         """
         try:
-            asset_id = asset_list.get_ticker(ticker)
+            asset_id = get_ticker(ticker)
             # Chiamata rapida per ticker (Last Price e Volume 24h)
             ticker_data = self.exchange.fetch_ticker(asset_id)
             current_price = float(ticker_data['last'])
@@ -72,102 +75,88 @@ class EngineLA:
         except Exception as e:
             self.logger.warning(f"⚠️ Sentinella momentaneamente cieca per {ticker}: {e}")
             return False
+    
     def get_market_data(self, ticker):
-        """Analisi Quantitativa Istituzionale: Microstruttura + Volume Profile."""
+        """
+        Analisi Quantitativa Istituzionale - Versione Unificata Project Chimera.
+        Sincronizzata per evitare azzeramento CVD/VPIN.
+        """
         res = {}
         try:
-            asset_id = asset_list.get_ticker(ticker)
+            asset_id = get_ticker(ticker) 
+            self.logger.info(f"🔍 [ENGINE] Analisi avviata per: {ticker} (Kraken ID: {asset_id})")
             
-            # 1. ANALISI TRADE & VELOCITY (Micro-flussi)
-            try:
-                # 300 trade per coprire Delta, Footprint e Velocity con una sola chiamata
-                trades = self.exchange.fetch_trades(asset_id, limit=300)
-            except Exception as e:
-                self.logger.warning(f"⚠️ Kraken trades timeout per {ticker}: {e}")
-                trades = []
-
-            delta_tot, whale_delta = 0, 0
-            whale_threshold = 50000 
-            if trades:
-                res['trade_velocity'] = len(trades) / (time.time() - (trades[0]['timestamp']/1000))
-                for t in trades:
-                    val = float(t['amount']) * float(t['price'])
-                    amount = float(t['amount'])
-                    if t['side'] == 'buy':
-                        delta_tot += amount
-                        if val > whale_threshold: whale_delta += amount
-                    else:
-                        delta_tot -= amount
-                        if val > whale_threshold: whale_delta -= amount
-            else:
-                res['trade_velocity'] = 0
-
-            res['cvd_reale'] = delta_tot
-            res['whale_delta'] = whale_delta
-            res['price_velocity'] = self.get_price_velocity(ticker, trades_freschi=trades)
-
+            # 1. ANALISI TRADE & VELOCITY (Project Chimera)
+            # Qui otteniamo i dati REALI (es. -2.87)
+            flow_data = self.get_detailed_order_flow(ticker)
+            res['cvd'] = flow_data['cvd']
+            res['cvd_reale'] = flow_data['cvd']
+            res['price_velocity'] = flow_data['price_velocity']
+            res['is_explosive'] = flow_data['is_explosive']
+            res['aggressivita'] = flow_data['aggressività']
+            # Recuperiamo il VPIN se presente in flow_data, altrimenti usiamo 0
+            res['vpin'] = flow_data.get('vpin', 0.0)
+            
             # 2. OHLCV & VOLUME PROFILE
             ohlcv = self.exchange.fetch_ohlcv(asset_id, timeframe='15m', limit=100)
             df = pd.DataFrame(ohlcv, columns=['ts', 'open', 'high', 'low', 'close', 'volume'])
             
-            # --- CALCOLO POC E VALUE AREA ---
-            bins = 20
-            df['price_bin'] = pd.cut(df['close'], bins=bins)
-            volume_per_bin = df.groupby('price_bin', observed=True)['volume'].sum()
-            poc_bin = volume_per_bin.idxmax()
-            
-            res['poc'] = float((poc_bin.left + poc_bin.right) / 2)
-            res['high_24h'] = float(df['high'].max())
-            res['low_24h'] = float(df['low'].min())
-            res['close'] = float(df['close'].iloc[-1])
-            
-            sorted_vols = volume_per_bin.sort_values(ascending=False)
-            total_vol = df['volume'].sum()
-            current_vol_va = 0
-            va_bins = []
-            for bin_idx, vol in sorted_vols.items():
-                current_vol_va += vol
-                va_bins.append(bin_idx)
-                if current_vol_va >= total_vol * 0.70: break
-            
-            res['vah'] = float(max([b.right for b in va_bins]))
-            res['val'] = float(min([b.left for b in va_bins]))
+            if df.empty: return {"close": 0, "atr": 0.5, "market_regime": "MEAN_REVERSION"}
 
-            # 3. INDICATORI E SENSORI ELITE
-            res['vwap'] = float((df['close'] * df['volume']).sum() / df['volume'].sum())
+            for col in ['open', 'high', 'low', 'close', 'volume']:
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+            
+            df = df.dropna()
+
+            res['close'] = float(df['close'].iloc[-1])
             res['atr'] = self._calcola_atr(df)
             res['squeeze'] = self._calcola_squeeze(df)
-            res['fvg'] = self._check_fvg(df)
 
-            # 4. ORDERBOOK & HFT
-            ob = self.exchange.fetch_order_book(asset_id, limit=100)
-            iceberg, spoofing = self._detect_hft_anomalies(ticker, ob)
-            res['iceberg_presenti'] = iceberg
-            res['indice_spoofing'] = spoofing
-            
-            bid_vol_50 = sum([b[1] for b in ob['bids'][:50]])
-            ask_vol_50 = sum([a[1] for a in ob['asks'][:50]])
-            imbalance = bid_vol_50 / ask_vol_50 if ask_vol_50 > 0 else 1
-            res['absorption'] = "BULL_ABS" if (imbalance > 2.5 and delta_tot < 0) else ("BEAR_ABS" if (imbalance < 0.4 and delta_tot > 0) else "NORMAL")
+            # 3. LIQUIDITY WALLS
+            walls = self.get_liquidity_walls(ticker)
+            res['muro_supporto'] = walls['muro_supporto']
+            res['muro_resistenza'] = walls['muro_resistenza']
+            res['dist_supporto'] = walls['dist_supporto']
+            res['dist_resistenza'] = walls['dist_resistenza']
+            res['liquidity_pools'] = walls 
 
-            # 5. REGIME & SALUTE (Project Chimera)
+            # 4. REGIME & HFT
             res['hurst_exponent'] = self._get_hurst_exponent(df['close'].values)
-            res['market_regime'] = "TRENDING" if res['hurst_exponent'] > 0.52 else ("MEAN_REVERSION" if res['hurst_exponent'] < 0.48 else "RANDOM_WALK")
-            res['vpin_toxicity'] = self._get_vpin_toxicity_veloce(trades)
-            res['health_data'] = self.get_market_health_score(ticker, trades)
+            res['market_regime'] = "TRENDING" if res['hurst_exponent'] > 0.52 else "MEAN_REVERSION"
+            
+            # Salviamo l'hurst per l'health score
+            self._last_hurst = res['hurst_exponent']
+            
+            ob = self.exchange.fetch_order_book(asset_id, limit=50)
+            iceberg, spoofing = self._detect_hft_anomalies(ticker, ob)
+            res['indice_spoofing'] = float(spoofing)
+            
+            # --- FIX CRITICO: NON RICALCOLARE, USA FLOW_DATA ---
+            # Passiamo l'intero dizionario flow_data alla salute del mercato
+            res['health_data'] = self.get_market_health_score(ticker, flow_data)
+            # Aggiorniamo il vpin finale con quello validato dalla salute
+            res['vpin'] = res['health_data']['vpin_value']
 
-            # --- LIQUIDITY MAPPING ---
-            res['liquidity_walls'] = self.get_liquidity_walls(asset_id)
-            res['liquidity_pools'] = self.get_liquidity_pools(ticker)
+            # --- LOG ISTITUZIONALE PER SBLOCCO GEMINI ---
+            self.logger.info(
+                f"📊 [DATA_DUMP] {ticker} | CVD: {res['cvd']} | Vel: {res['price_velocity']} | "
+                f"Muro_S: {res['muro_supporto']} ({res['dist_supporto']:.2f}%) | "
+                f"Muro_R: {res['muro_resistenza']} ({res['dist_resistenza']:.2f}%) | "
+                f"VPIN: {res['vpin']:.4f} | Spoofing: {res['indice_spoofing']:.2f}"
+            )
+            
+            self.logger.info(f"🔹 [ORDER FLOW] CVD: {res['cvd']:+.2f} | VPIN: {res['vpin']:.4f}")
+            self.logger.info(f"🏥 MARKET HEALTH: {res['health_data']['market_health_index']} | REGIME: {res['market_regime']}")
             
             return res
         except Exception as e:
-            self.logger.error(f"⚠️ Errore critico Engine: {e}")
-            return {"close": 0, "atr": 0, "poc": 0}
+            self.logger.error(f"🔴 Errore fatale get_market_data: {e}")
+            return {"close": 0, "atr": 0.5, "market_regime": "MEAN_REVERSION"}
+    
     def get_price_velocity(self, ticker, trades_freschi=None):
         """Calcola la velocità vettoriale del prezzo (%/secondo)."""
         try:
-            trades = trades_freschi if trades_freschi is not None else self.exchange.fetch_trades(asset_list.get_ticker(ticker), limit=50)
+            trades = trades_freschi if trades_freschi is not None else self.exchange.fetch_trades(get_ticker(ticker), limit=50)
             if not trades or len(trades) < 2: return 0.0
             
             p_start, p_end = float(trades[0]['price']), float(trades[-1]['price'])
@@ -177,6 +166,7 @@ class EngineLA:
             velocity = ((p_end - p_start) / p_start * 100) / duration
             return round(velocity, 6)
         except: return 0.0      
+    
     def _calcola_divergenza_cvd_reale(self, prezzi, trades):
         """
         Analisi avanzata della divergenza: confronta l'andamento del prezzo
@@ -218,7 +208,20 @@ class EngineLA:
         sells = sum([float(t['amount']) for t in trades if t['side'] == 'sell'])
         total = buys + sells
         return (buys - sells) / total if total > 0 else 0
-
+    
+    def _calcola_zscore(self, serie, window=20):
+        """Normalizza i dati per rilevare anomalie istituzionali (>2.0 o <-2.0)."""
+        try:
+            if isinstance(serie, list): serie = pd.Series(serie)
+            if len(serie) < window: return 0.0
+            rolling_mean = serie.rolling(window=window).mean()
+            rolling_std = serie.rolling(window=window).std()
+            last_std = rolling_std.iloc[-1]
+            if last_std == 0 or np.isnan(last_std): return 0.0
+            z = (serie.iloc[-1] - rolling_mean.iloc[-1]) / last_std
+            return round(float(z), 2)
+        except: return 0.0
+    
     def _get_vpin_toxicity_veloce(self, trades):
         """
         VPIN (Volume-synchronized Probability of Informed Trading).
@@ -258,42 +261,44 @@ class EngineLA:
             self.logger.debug(f"⚠️ Errore calcolo VPIN: {e}")
             return 0.5
 
-    def get_market_health_score(self, ticker, trades):
+    def get_market_health_score(self, ticker, order_flow_data):
         """
         CHIMERA: Genera un punteggio di 'salute' (0.0 - 1.0).
-        Basato su VPIN (Tossicità) e Hurst (Regime).
+        FIX: Riceve order_flow_data (già calcolato) invece di ricalcolare i trades.
         """
         try:
-            # Recuperiamo l'ultimo Hurst salvato o usiamo il default neutrale
-            hurst = getattr(self, '_last_hurst', 0.5)
-            vpin = self._get_vpin_toxicity_veloce(trades)
+            # Recuperiamo l'Hurst appena calcolato
+            if not hasattr(self, '_last_hurst'):
+                self._last_hurst = 0.5 
             
-            # Peso del Regime: Trending (H > 0.55) e Mean Reverting (H < 0.45) 
-            # sono segnali di mercato strutturato. 0.5 è rumore casuale.
-            if hurst > 0.55 or hurst < 0.45:
-                regime_conf = 1.0
-            else:
-                regime_conf = 0.5
-            
-            # La salute è massima quando il regime è chiaro e la tossicità è bassa
+            # --- FIX CHIMERA: Prendiamo il VPIN già calcolato nel DATA_DUMP ---
+            # Se order_flow_data non ha il vpin, usiamo 0.0 come fallback sicuro
+            vpin = float(order_flow_data.get('vpin', 0.0))
+            hurst = self._last_hurst
+        
+            # Logica di confidenza: più ci allontaniamo dal rumore (0.5), più il mercato è sano
+            regime_conf = 1.0 if (hurst > 0.55 or hurst < 0.45) else 0.5
+        
+            # Salute: (Struttura Mercato + Assenza Tossicità) / 2
             health_score = (regime_conf + (1.0 - vpin)) / 2
-            
+        
             return {
                 "market_health_index": round(health_score, 4),
                 "vpin_value": round(vpin, 4),
-                "hurst_used": hurst
+                "hurst_used": hurst,
+                "status": "HEALTHY" if health_score > 0.6 else "UNSTABLE"
             }
-        except:
-            return {"market_health_index": 0.5, "vpin_value": 0.5}
+        except Exception as e:
+            self.logger.error(f"❌ Errore Health Score su {ticker}: {e}")
+            return {"market_health_index": 0.5, "vpin_value": 0.0, "status": "UNKNOWN"}
+    
     def get_full_market_data(self, ticker):
         """
-        Recupera dati completi di mercato: prezzo e ATR (e alcuni campi ausiliari).
-        - Prima prova a ottenere la full analysis tramite get_market_data (dict).
-        - In fallback esegue una fetch_ticker per recuperare almeno il prezzo.
-        Ritorna sempre un dict con almeno le chiavi: 'price' e 'atr'.
+        Recupera dati completi di mercato senza filtri distruttivi.
+        Passa l'intero dizionario generato da get_market_data per alimentare il Brain.
         """
         try:
-            # 1) Proviamo a ottenere i dati completi dall'engine (get_market_data)
+            # 1) Proviamo a ottenere i dati completi dall'engine
             data = {}
             try:
                 data = self.get_market_data(ticker) or {}
@@ -301,122 +306,124 @@ class EngineLA:
                 self.logger.debug(f"ℹ️ get_market_data fallito per {ticker}: {e_gm}")
                 data = {}
 
-            # Se data è valida e contiene i campi attesi, normalizziamo il return
+            # Se data contiene il prezzo, passiamo TUTTO il dizionario
             if isinstance(data, dict) and data.get('close') is not None:
-                return {
-                    'price': float(data.get('close', 0)),
-                    'atr': float(data.get('atr', 0) or 0),
-                    'volume': float(data.get('volume', 0) or data.get('baseVolume', 0) or 0),
-                    'fng_proxy': data.get('z_score', data.get('fng_proxy', 0)),
-                    'price_velocity': float(data.get('price_velocity', 0.0)) # <-- AGGIUNTO PER CHIMERA
-                }
+                # 1. Normalizziamo il prezzo
+                data['price'] = float(data.get('close', 0))
+                
+                # 2. FIX ATR: Se è 0 o mancante, calcoliamo un valore di emergenza (0.5% del prezzo)
+                raw_atr = data.get('atr', 0)
+                if not raw_atr or float(raw_atr) == 0:
+                    data['atr'] = data['price'] * 0.005  # Emergenza: 0.5% del prezzo attuale
+                else:
+                    data['atr'] = float(raw_atr)
 
-            # 2) Fallback: fetch_ticker per ottenere almeno il prezzo corrente
+                # 3. Pulizia Muri
+                if 'liquidity_pools' not in data or not data['liquidity_pools']:
+                    data['liquidity_pools'] = []
+                
+                return data
+
+            # 2) Fallback: fetch_ticker se l'analisi tecnica fallisce
             try:
-                symbol_kraken = asset_list.get_ticker(ticker)
+                from core import asset_list
+                symbol_kraken = get_ticker(ticker)
                 ticker_info = self.exchange.fetch_ticker(symbol_kraken)
                 return {
-                    'price': float(ticker_info.get('last', ticker_info.get('close', 0) or 0)),
-                    'atr': 0.0,
-                    'volume': float(ticker_info.get('baseVolume', 0) or 0),
-                    'fng_proxy': 0
+                    'price': float(ticker_info.get('last', 0)),
+                    'close': float(ticker_info.get('last', 0)),
+                    'atr': float(ticker_info.get('last', 0)) * 0.01, # Default 1% invece di 0
+                    'volume': float(ticker_info.get('baseVolume', 0)),
+                    'market_regime': 'Noise',
+                    'liquidity_pools': [],
+                    'price_velocity': 0.0,
+                    'cvd_reale': 0.0
                 }
             except Exception as e_ft:
                 self.logger.debug(f"⚠️ fetch_ticker fallback fallito per {ticker}: {e_ft}")
 
-            # 3) Fallback finale: return valori neutri (coerenti)
-            return {'price': 0.0, 'atr': 0.0, 'volume': 0.0, 'fng_proxy': 0.0}
+            return {'price': 0.0, 'close': 0.0, 'atr': 0.0, 'liquidity_pools': []}
 
         except Exception as e:
-            self.logger.error(f"❌ Errore get_full_market_data per {ticker}: {e}")
-            return {'price': 0.0, 'atr': 0.0, 'volume': 0.0, 'fng_proxy': 0.0}
+            self.logger.error(f"❌ Errore critico get_full_market_data per {ticker}: {e}")
+            return {'price': 0.0, 'close': 0.0, 'atr': 0.0, 'liquidity_pools': []}
+    
+    def analizza_asset(self, ticker):
+        """Metodo ponte per la compatibilità con il bot principale."""
+        return self.get_full_market_data(ticker)
     
     def get_liquidity_walls(self, asset_id):
         """
         ANALISI CHIMERA: Trova muri aggregati e calcola la distanza reale.
-        FIX: Previene crash su 3 colonne Kraken e gestisce orders vuoti.
+        FIX: Conversione numerica esplicita per evitare muri a 0.
         """
         try:
-            # 1. Radar a 500 per profondità istituzionale
-            ob = self.exchange.fetch_order_book(asset_id, limit=500)
-            if not ob['bids'] or not ob['asks']: 
-                return {"muro_supporto": 0, "dist_supporto": 999, "muro_resistenza": 0, "dist_resistenza": 999}
+            # FIX: Converte XXBTZUSD in BTC/USD per CCXT
+            ticker_ccxt = get_ticker(asset_id)
+            ob = self.exchange.fetch_order_book(ticker_ccxt, limit=500)
+            
+            if not ob.get('bids') or not ob.get('asks'):
+                return {"muro_supporto": 0, "dist_supporto": 0.0, "muro_resistenza": 0, "dist_resistenza": 0.0}
             
             last_price = float(ob['bids'][0][0])
             
             def get_best_zone(orders):
-                if not orders: return 0.0, 0.0, 999.0
-                
-                # TRICK CHIMERA: Carico tutto, poi affetto per evitare il mismatch delle colonne
-                df_temp = pd.DataFrame(orders)
-                if df_temp.empty: return 0.0, 0.0, 999.0
-
-                # Prendiamo solo Prezzo e Volume (le prime due), scartando il Timestamp
-                df_ob = df_temp.iloc[:, :2].copy()
+                if not orders: return 0.0, 0.0, 0.0
+                # Specifichiamo le colonne e forziamo il tipo float
+                df_ob = pd.DataFrame(orders).iloc[:, :2]
                 df_ob.columns = ['price', 'vol']
-                
-                # Conversione esplicita per calcoli matematici sicuri
-                df_ob['price'] = df_ob['price'].astype(float)
-                df_ob['vol'] = df_ob['vol'].astype(float)
-                
-                # Creiamo zone dello 0.1% per raggruppare ordini vicini (Muri Reali)
+                df_ob['price'] = pd.to_numeric(df_ob['price'], errors='coerce')
+                df_ob['vol'] = pd.to_numeric(df_ob['vol'], errors='coerce')
+                df_ob = df_ob.dropna()
+
+                if df_ob.empty: return 0.0, 0.0, 0.0
+
+                # Clustering istituzionale 0.1%
                 bin_size = last_price * 0.001 
                 df_ob['zone'] = (df_ob['price'] / bin_size).round() * bin_size
-                
-                # Sommiamo i volumi per ogni zona
                 clusters = df_ob.groupby('zone')['vol'].sum().sort_values(ascending=False)
                 
-                if clusters.empty: return 0.0, 0.0, 999.0
+                if clusters.empty: return 0.0, 0.0, 0.0
                 
                 best_price = float(clusters.index[0])
-                best_vol = float(clusters.iloc[0])
                 distanza = abs(best_price - last_price) / last_price * 100
-                return best_price, best_vol, round(distanza, 2)
+                return best_price, float(clusters.iloc[0]), round(distanza, 2)
 
             w_bid_p, w_bid_v, d_bid = get_best_zone(ob['bids'])
             w_ask_p, w_ask_v, d_ask = get_best_zone(ob['asks'])
 
             return {
-                "muro_supporto": w_bid_p,
-                "vol_supporto": w_bid_v,
-                "dist_supporto": d_bid,
-                "muro_resistenza": w_ask_p,
-                "vol_resistenza": w_ask_v,
-                "dist_resistenza": d_ask
+                "muro_supporto": w_bid_p, "vol_supporto": w_bid_v, "dist_supporto": d_bid,
+                "muro_resistenza": w_ask_p, "vol_resistenza": w_ask_v, "dist_resistenza": d_ask
             }
         except Exception as e:
-            self.logger.warning(f"⚠️ Errore critico Liquidity Walls: {e}")
-            return {"muro_supporto": 0, "dist_supporto": 999, "muro_resistenza": 0, "dist_resistenza": 999}
-
+            self.logger.warning(f"⚠️ Errore Liquidity Walls: {e}")
+            return {"muro_supporto": 0, "dist_supporto": 0.0, "muro_resistenza": 0, "dist_resistenza": 0.0}
     def get_liquidity_pools(self, ticker):
         """
         Identifica le aree di liquidità più dense (Calamite per il TP).
-        FIX: Applicato Trick Chimera per gestire le 3 colonne di Kraken.
+        FIX: Gestione robusta dei tipi per Kraken.
         """
         try:
-            asset_id = asset_list.get_ticker(ticker)
+            asset_id = get_ticker(ticker)
             ob = self.exchange.fetch_order_book(asset_id, limit=500)
             
             def find_top_zones(orders):
                 if not orders: return []
-                df_temp = pd.DataFrame(orders)
-                if df_temp.empty: return []
-
-                # Selezioniamo solo le prime due colonne come fatto sopra
-                df = df_temp.iloc[:, :2].copy()
+                df = pd.DataFrame(orders).iloc[:, :2]
                 df.columns = ['prezzo', 'volume']
-                
-                # Restituisce i 3 ordini più pesanti in profondità
-                return df.sort_values('volume', ascending=False).head(3).to_dict('records')
+                # Forza conversione per evitare errori di ordinamento stringa
+                df['prezzo'] = pd.to_numeric(df['prezzo'], errors='coerce')
+                df['volume'] = pd.to_numeric(df['volume'], errors='coerce')
+                return df.dropna().sort_values('volume', ascending=False).head(3).to_dict('records')
 
             return {
-                "pools_supporto": find_top_zones(ob['bids']),
-                "pools_resistenza": find_top_zones(ob['asks'])
+                "pools_supporto": find_top_zones(ob.get('bids', [])),
+                "pools_resistenza": find_top_zones(ob.get('asks', []))
             }
         except Exception as e:
             self.logger.error(f"🔴 Errore Liquidity Mapping {ticker}: {e}")
             return {"pools_supporto": [], "pools_resistenza": []}
-    
     def _calcola_squeeze(self, df):
         """Rileva se il mercato è in fase di compressione (Squeeze)."""
         std = df['close'].rolling(20).std()
@@ -506,7 +513,7 @@ class EngineLA:
             # Analisi ATR vs Volume per il Warning di Liquidità (Slippage)
             # Recuperiamo ultimi dati per calcolare la media del volume
             ohlcv = self.exchange.fetch_ohlcv('BTC/USDT', timeframe='1h', limit=24)
-            df = pd.DataFrame(ohlcv, columns=['t', 'o', 'h', 'l', 'c', 'v'])
+            df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
             avg_vol = df['v'].mean()
             current_vol = df['v'].iloc[-1]
             
@@ -536,11 +543,30 @@ class EngineLA:
         except: return 1.0
 
     def _calcola_atr(self, df):
-        """Calcola l'ATR a 14 periodi per il calcolo della volatilità."""
-        tr = pd.concat([df['high']-df['low'], 
-                        abs(df['high']-df['close'].shift()), 
-                        abs(df['low']-df['close'].shift())], axis=1).max(axis=1)
-        return float(tr.rolling(14).mean().iloc[-1])
+        """Calcola l'ATR adattivo per evitare lo 0.00% iniziale."""
+        if df is None or len(df) < 2:
+            return 0.0
+        
+        # Calcolo True Range
+        high_low = df['high'] - df['low']
+        high_close = abs(df['high'] - df['close'].shift())
+        low_close = abs(df['low'] - df['close'].shift())
+        
+        tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
+        
+        # --- FIX ADATTIVO ---
+        # Se abbiamo meno di 14 candele, usiamo quelle disponibili (min_periods=1)
+        # Questo impedisce al bot di restituire 0 nei primi minuti di vita
+        atr_series = tr.rolling(window=14, min_periods=1).mean()
+        
+        valore_atr = atr_series.iloc[-1]
+        
+        # Protezione finale contro i NaN
+        import math
+        if math.isnan(valore_atr):
+            return 0.0
+            
+        return float(valore_atr)
     def _get_wall_persistence(self, ticker, price, side):
         """
         Calcola la persistenza di un muro di liquidità (Anti-Spoofing).
@@ -589,7 +615,7 @@ class EngineLA:
     def _calcola_delta_footprint(self, ticker):
         """Analisi Aggressività: chi sta colpendo il book ora?"""
         try:
-            asset_id = asset_list.get_ticker(ticker)
+            asset_id = get_ticker(ticker)
             trades = self.exchange.fetch_trades(asset_id, limit=300)
             if not trades: return 0
             buy_v = sum([float(t['amount']) for t in trades if t['side'] == 'buy'])
@@ -609,17 +635,42 @@ class EngineLA:
         
     def _get_hurst_exponent(self, prices, lags=range(2, 20)):
         """
-        CLASSIFICATORE DI REGIME (Hurst)
+        CLASSIFICATORE DI REGIME (Hurst) - Versione Protetta Project Chimera.
         H < 0.5: Mean Reverting (Laterale/Box)
         H > 0.5: Trending (Trend Forte/Breakout)
         """
         try:
-            if len(prices) < 20: return 0.5
-            tau = [np.sqrt(np.std(np.subtract(prices[lag:], prices[:-lag]))) for lag in lags]
+            # Protezione 1: Numero minimo di dati
+            if len(prices) < 20: 
+                return 0.5
+            
+            # Calcolo tau con protezione per prezzi piatti (std=0)
+            tau = []
+            for lag in lags:
+                diffs = np.subtract(prices[lag:], prices[:-lag])
+                std_val = np.std(diffs)
+                # Se la std è 0 (prezzi identici), aggiungiamo un epsilon per evitare log(0)
+                tau.append(np.sqrt(std_val) if std_val > 0 else 1e-10)
+            
+            # Protezione 2: Regressione lineare (np.polyfit)
+            # np.log(tau) e np.log(lags) devono avere valori validi
             poly = np.polyfit(np.log(lags), np.log(tau), 1)
+            
+            # Scalatura Hurst: il coefficiente va raddoppiato per il range 0-1
             h = round(poly[0] * 2.0, 2)
+            
+            # Normalizzazione forzata nel range teorico [0, 1]
+            h = max(0.0, min(1.0, h))
+            
+            # Salvataggio per uso interno (Market Health Score)
+            self._last_hurst = h
             return h
-        except: return 0.5
+            
+        except Exception as e:
+            # Se il mercato è troppo illiquido o i dati sono corrotti, default neutro
+            if hasattr(self, 'logger'):
+                self.logger.debug(f"ℹ️ Hurst calc info: mercato troppo statico per {len(prices)} sample.")
+            return 0.5
 
     def _get_vpin_toxicity(self, ticker):
         """
@@ -627,7 +678,7 @@ class EngineLA:
         Rileva se gli scambi sono dominati da 'Informed Traders' (Alta frequenza/Istituzionali).
         """
         try:
-            asset_id = asset_list.get_ticker(ticker)
+            asset_id = get_ticker(ticker)
             trades = self.exchange.fetch_trades(asset_id, limit=100)
             if not trades: return 0
             v_buy = sum([float(t['amount']) for t in trades if t['side'] == 'buy'])
@@ -666,73 +717,81 @@ class EngineLA:
     def get_detailed_order_flow(self, ticker):
         """
         PROJECT CHIMERA - Step 1 & 2:
-        Analisi avanzata Order Flow: calcola CVD, Momentum e PRICE VELOCITY.
+        Analisi avanzata Order Flow: calcola CVD, Momentum, PRICE VELOCITY e VPIN.
         """
         try:
-            # Recupero ticker corretto (es. XXBTZUSD)
-            symbol = asset_list.get_ticker(ticker)
+            # 1. Recupero ticker corretto
+            symbol = get_ticker(ticker)
             
-            # Fetch degli ultimi 200 trade eseguiti sul mercato
-            trades = self.exchange.fetch_trades(symbol, limit=200)
+            # 2. Fetch trade con protezione timeout - Alzato a 500 per avere dati reali
+            trades = self.exchange.fetch_trades(symbol, limit=500)
             
-            # Creazione DataFrame
-            import pandas as pd
-            df = pd.DataFrame(trades, columns=['timestamp', 'side', 'amount', 'price'])
+            # --- PROTEZIONE CHIMERA ---
+            if not trades or len(trades) < 2:
+                return {
+                    'cvd': 0.0, 'vpin': 0.0, 'momentum_perc': 0.0, 'price_velocity': 0.0, 
+                    'is_explosive': False, 'aggressività': "NEUTRAL"
+                }
             
+            # 3. Creazione DataFrame
+            df = pd.DataFrame(trades)
+            
+            if df.empty or 'side' not in df.columns:
+                return {'cvd': 0.0, 'vpin': 0.0, 'momentum_perc': 0.0, 'price_velocity': 0.0, 'is_explosive': False, 'aggressività': "NEUTRAL"}
+
+            # --- [LOGICA CHIMERA: DATA CLEANING] ---
+            df['price'] = pd.to_numeric(df['price'], errors='coerce')
+            df['amount'] = pd.to_numeric(df['amount'], errors='coerce')
+            df['timestamp'] = pd.to_numeric(df['timestamp'], errors='coerce')
+            df = df.dropna(subset=['price', 'amount', 'timestamp', 'side'])
+
             # --- [LOGICA CHIMERA: PRICE VELOCITY] ---
-            # Calcolo prezzi e tempi
             start_price = float(df['price'].iloc[0])
             end_price = float(df['price'].iloc[-1])
-            
-            # Calcoliamo la durata in secondi tra il primo e l'ultimo trade del pacchetto
             start_time = df['timestamp'].iloc[0] / 1000
             end_time = df['timestamp'].iloc[-1] / 1000
-            duration = max(end_time - start_time, 1) # Evitiamo divisioni per zero
+            duration = max(end_time - start_time, 1) 
             
-            # Momentum: Variazione % totale
             momentum = ((end_price - start_price) / start_price) * 100
-            
-            # VELOCITY: Quanta % si muove il prezzo al secondo
             velocity = momentum / duration
-            
-            # Identifichiamo se il movimento è esplosivo (istituzionale)
-            # 0.005% al secondo è una soglia alta che indica algoritmi in azione
             is_explosive = abs(velocity) > 0.0005
-            # ----------------------------------------
 
-            # Calcolo Delta per ogni trade
-            df['delta'] = df.apply(lambda x: float(x['amount']) if x['side'] == 'buy' else -float(x['amount']), axis=1)
-            cvd = df['delta'].sum()
+            # 5. Calcolo Delta (CVD) e VPIN
+            df['delta'] = np.where(df['side'] == 'buy', df['amount'], -df['amount'])
+            cvd = float(df['delta'].sum())
             
-            self.logger.info(f"⚡ CHIMERA: Vel {velocity:.6f} %/s | Explosive: {is_explosive}")
+            # --- AGGIUNTA CHIMERA: Calcolo VPIN ---
+            vol_totale = df['amount'].sum()
+            vpin = abs(cvd) / vol_totale if vol_totale > 0 else 0.0
+            
+            self.logger.info(f"⚡ CHIMERA: Vel {velocity:.6f} %/s | CVD: {cvd:.4f} | VPIN: {vpin:.4f}")
 
             return {
                 'cvd': round(cvd, 4),
+                'vpin': round(vpin, 4), # <--- ORA È PRESENTE!
                 'momentum_perc': round(momentum, 4),
-                'price_velocity': round(velocity, 6), # Nuovo dato
-                'is_explosive': is_explosive,         # Nuovo dato
+                'price_velocity': round(velocity, 6),
+                'is_explosive': is_explosive,
                 'aggressività': "BUYERS" if cvd > 0 else "SELLERS"
             }
         except Exception as e:
             self.logger.error(f"🔴 Errore calcolo Order Flow su {ticker}: {e}")
-            return {'cvd': 0, 'momentum_perc': 0, 'price_velocity': 0, 'is_explosive': False, 'aggressività': "NEUTRAL"}
+            return {'cvd': 0.0, 'vpin': 0.0, 'momentum_perc': 0.0, 'price_velocity': 0.0, 'is_explosive': False, 'aggressività': "NEUTRAL"}
+    
     def _detect_hft_anomalies(self, ticker, ob):
         """Rileva tracce di algoritmi HFT e manipolazioni (Spoofing/Iceberg)."""
         try:
             bids = ob['bids'][:20]
             asks = ob['asks'][:20]
             
-            # Calcolo Spoofing: squilibrio estremo e repentino tra i primi livelli
-            bid_vol = sum([b[1] for b in bids])
-            ask_vol = sum([a[1] for a in asks])
+            # Calcolo Spoofing
+            bid_vol = sum([float(b[1]) for b in bids])
+            ask_vol = sum([float(a[1]) for a in asks])
             spoofing_idx = round(abs(bid_vol - ask_vol) / (bid_vol + ask_vol), 2) if (bid_vol + ask_vol) > 0 else 0
             
-            # Iceberg: Se lo spoofing è altissimo e il prezzo non si muove, c'è assorbimento nascosto
+            # Iceberg: Se lo spoofing è altissimo (>0.85), rileviamo assorbimento
             iceberg_detected = 1 if (spoofing_idx > 0.85) else 0
             
-            return iceberg_detected, spoofing_idx
-        except Exception:
-            return 0, 0.0
             return iceberg_detected, spoofing_idx
         except Exception:
             return 0, 0.0
