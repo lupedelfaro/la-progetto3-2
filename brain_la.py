@@ -698,17 +698,14 @@ class BrainLA:
         market_efficiency = dati_engine.get('kaufman_efficiency', 1.0)
         
         # Estrazione Order Flow (Protetto da sovrascritture errate)
-        cvd_chimera = dati_engine.get('cvd', 0)
-        cvd_value = cvd_chimera # Alias per coerenza prompt
-        velocity_chimera = dati_engine.get('price_velocity', 0)
-        is_explosive = dati_engine.get('is_explosive', False)
-        spoofing = dati_engine.get('indice_spoofing', 0)
-        iceberg = dati_engine.get('iceberg_presenti', False)
-        cvd_divergence = dati_engine.get('cvd_divergence', False)
+        cvd_istantaneo = dati_engine.get('cvd_istantaneo', 0.0)
         prev_vah = dati_engine.get('vah_ieri', dati_engine.get('vah', 0))
-        prev_val = dati_engine.get('val_ieri', dati_engine.get('val', 0))
-
-        # Parametri Secondari e Microstruttura
+        price_velocity = dati_engine.get('price_velocity', 0.0)
+        is_explosive = dati_engine.get('is_explosive', False)
+        iceberg = dati_engine.get('iceberg_presenti', False)
+        spoofing = dati_engine.get('indice_spoofing', 0.0)
+        cvd_divergence = dati_engine.get('cvd_divergence', False)
+        ofi = dati_engine.get('order_flow_imbalance', 0.0)
         rolling_vol = dati_engine.get('rolling_volatility', 0)
         rvol = dati_engine.get('macro_proxy', {}).get('relative_volume_status', 1.0)
         bp = dati_engine.get('book_pressure', 1.0)
@@ -734,60 +731,56 @@ class BrainLA:
         lvn = dati_engine.get('low_volume_nodes', [])
 
         # Dati aggiuntivi HFT
+        vpin = dati_engine.get('vpin', 0.0)
         buy_imb = dati_engine.get('buy_imbalance_levels', [])
         sell_imb = dati_engine.get('sell_imbalance_levels', [])
-        prob_return = dati_engine.get('stat_return_prob', 0)
-        z_dist_vwap = dati_engine.get('distance_zscore_vwap', 0)
-        ofi = dati_engine.get('order_flow_imbalance', 0)
+        prob_return = dati_engine.get('prob_ritorno_vwap', 50)
+        z_dist_vwap = dati_engine.get('z_score_dist_vwap', 0)
+        muro_supporto_prezzo = dati_engine.get('muro_supporto', 0.0)
+        muro_resistenza_prezzo = dati_engine.get('muro_resistenza', 0.0)
+        dist_supportoupporto = dati_engine.get('dist_supportoupporto', 999.0)
+        dist_resistenzaesistenza = dati_engine.get('dist_resistenzaesistenza', 999.0)
         latency = dati_engine.get('kraken_latency', 0)
-        
-        # Recupero Muri (Fix per evitare Muri H1: 0)
-        muro_s_prezzo = dati_engine.get('muro_supporto', 0)
-        muro_r_prezzo = dati_engine.get('muro_resistenza', 0)
-        dist_supporto = dati_engine.get('dist_supporto', 999.0)
-        dist_resistenza = dati_engine.get('dist_resistenza', 999.0)
-        
         
         # --- 2. GERARCHIA CHIMERA: 4H | 1H | 15M ---
         quadro_4h = {
-            "trend_primario": "BULLISH" if hurst > 0.55 and z_score > 0 else "BEARISH" if hurst > 0.55 and z_score < 0 else "CONSOLIDAMENTO",
-            "volatilita_macro": round(atr_p, 2),
-            "regime_hmm": regime_hmm
+            'trend_primario': 'BULLISH' if hurst > 0.55 and z_score > 0 else 'BEARISH' if hurst > 0.55 and z_score < 0 else 'CONSOLIDAMENTO',
+            'volatilita_macro': round(atr_p, 2),
+            'regime_hmm': regime_hmm
         }
 
         mappa_1h = {
-            "muro_supporto_h1": muro_s_prezzo,
-            "muro_resistenza_h1": muro_r_prezzo,
-            "distanza_supporto_h1_perc": round(dist_supporto, 2),
-            "distanza_resistenza_h1_perc": round(dist_resistenza, 2),
-            "vwap_distanza_perc": round((entry_price - vwap) / vwap * 100, 3) if vwap != 0 else 0
+            'muro_supportoupporto_h1': muro_supporto_prezzo,
+            'muro_resistenzaesistenza_h1': muro_resistenza_prezzo,
+            'distanza_supporto_h1_perc': round(dist_supportoupporto, 2),
+            'distanza_resistenza_h1_perc': round(dist_resistenzaesistenza, 2),
+            'vwap_distanza_perc': round((entry_price - vwap) / vwap * 100, 3) if vwap != 0 else 0
         }
 
         livelli_15m = {
-            "area_valore": {"vah": vah, "val": val, "poc": poc},
-            "pressione_book": bp,
-            "delta_volumi": vol_imbalance,
-            "efficienza_kaufman": market_efficiency
+            'area_valore': {'vah': vah, 'val': val, 'poc': poc},
+            'pressione_book': bp,
+            'delta_volumi': vol_imbalance,
+            'efficienza_kaufman': market_efficiency
         }
 
         trigger_flusso_istantaneo = {
-            "cvd_chimera": cvd_chimera,
-            "velocity_esplosiva": velocity_chimera,
-            "aggressivita_attuale": aggressivita_flow,
-            "vpin_tossicita": vpin
+            'cvd_istantaneo': cvd_istantaneo,
+            'price_velocity': price_velocity,
+            'aggressivita_flow': aggressivita_flow,
+            'vpin_tossicita': vpin
         }
 
         # --- FILTRO SICUREZZA CHIMERA: ANTI-CROLLO ---
-        trend_macro = quadro_4h["trend_primario"]
+        trend_macro = quadro_4h['trend_primario']
         
-        if trend_macro == "BULLISH" and velocity_chimera < -0.5:
-            self.logger.warning(f"⚠️ {asset_name}: Velocity negativa elevata ({velocity_chimera}%). Rischio crollo, scarto.")
-            return {"direzione": "FLAT", "voto": 0, "razionale": "ABORT_VELOCITY_CRASH"}
+        if trend_macro == 'BULLISH' and price_velocity < -0.5:
+            self.logger.warning(f'⚠️ {asset_name}: Velocity negativa elevata ({price_velocity}%). Rischio crollo, scarto.')
+            return {'direzione': 'FLAT', 'voto': 0, 'razionale': 'ABORT_VELOCITY_CRASH'}
             
-        if trend_macro == "BEARISH" and velocity_chimera > 0.5:
-            self.logger.warning(f"⚠️ {asset_name}: Velocity positiva elevata ({velocity_chimera}%). Rischio squeeze, scarto.")
-            return {"direzione": "FLAT", "voto": 0, "razionale": "ABORT_VELOCITY_SQUEEZE"}
-        
+        if trend_macro == 'BEARISH' and price_velocity > 0.5:
+            self.logger.warning(f'⚠️ {asset_name}: Velocity positiva elevata ({price_velocity}%). Rischio squeeze, scarto.')
+            return {'direzione': 'FLAT', 'voto': 0, 'razionale': 'ABORT_VELOCITY_SQUEEZE'}
         
         stats_globali = self.feedback_engine.get_stats_globali() if hasattr(self.feedback_engine, 'get_stats_globali') else {}
         report_lezioni = self.feedback_engine.get_feedback_summary(ticker_ufficiale)
@@ -795,87 +788,85 @@ class BrainLA:
         tech_narrative = self._get_technical_narrative(dati_engine)
 
         # --- [CHIMERA TECHNICAL FULL REPORT] ---
-        self.logger.info(f"📊 === ANALISI TECNICA COMPLETA: {ticker_ufficiale} ===")
-        self.logger.info(f"🏥 MARKET HEALTH: {market_health} | REGIME: {market_regime}")
+        self.logger.info(f'📊 === ANALISI TECNICA COMPLETA: {ticker_ufficiale} ===')
+        self.logger.info(f'🏥 MARKET HEALTH: {market_health} | REGIME: {market_regime}')
         
-        cvd_info = "VENDITORI AGGRESSIVI" if cvd_chimera < 0 else "COMPRATORI AGGRESSIVI"
-        vpin_info = "⚠️ MERCATO TOSSICO" if vpin > 0.70 else "Scambi Regolari"
-        self.logger.info(f"🔹 [ORDER FLOW] CVD: {cvd_chimera:+.2f} | VPIN: {vpin:.4f} [{vpin_info}]")
-        self.logger.info(f"   ➤ Delta Divergence: {'⚠️ ATTIVA' if cvd_divergence else '✅ Neutra'}")
+        cvd_info = 'VENDITORI AGGRESSIVI' if cvd_istantaneo < 0 else 'COMPRATORI AGGRESSIVI'
+        vpin_info = '⚠️ MERCATO TOSSICO' if vpin > 0.70 else 'Scambi Regolari'
+        self.logger.info(f'🔹 [ORDER FLOW] CVD: {cvd_istantaneo:+.2f} | VPIN: {vpin:.4f} [{vpin_info}]')
+        self.logger.info(f'   ➤ Delta Divergence: {"⚠️ ATTIVA" if cvd_divergence else "✅ Neutra"}')
 
-        bp_info = "Pressione BUY" if bp > 1.2 else "Pressione SELL" if bp < 0.8 else "Equilibrio"
-        self.logger.info(f"🔹 [LIQUIDITY] Book Pressure: {bp:.2f} [{bp_info}] | Spoofing: {spoofing:.2f}")
-        self.logger.info(f"   ➤ Muri H1: Supporto {muro_s_prezzo} ({dist_supporto}%) | Resistenza {muro_r_prezzo} ({dist_resistenza}%)")
+        bp_info = 'Pressione BUY' if bp > 1.2 else 'Pressione SELL' if bp < 0.8 else 'Equilibrio'
+        self.logger.info(f'🔹 [LIQUIDITY] Book Pressure: {bp:.2f} [{bp_info}] | Spoofing: {spoofing:.2f}')
+        self.logger.info(f'   ➤ Muri H1: Supporto {muro_supporto_prezzo} ({dist_supportoupporto}%) | Resistenza {muro_resistenza_prezzo} ({dist_resistenzaesistenza}%)')
 
-        regime_desc = "📈 TREND" if hurst > 0.55 else "↔️ RANGE"
-        self.logger.info(f"🔹 [MARKET REGIME] Hurst: {hurst:.2f} [{regime_desc}] | HMM: {regime_hmm}")
+        regime_desc = '📈 TREND' if hurst > 0.55 else '↔️ RANGE'
+        self.logger.info(f'🔹 [MARKET REGIME] Hurst: {hurst:.2f} [{regime_desc}] | HMM: {regime_hmm}')
 
-        vel_info = "FRENATA/CADUTA" if velocity_chimera < 0 else "ACCELERAZIONE"
-        self.logger.info(f"🔹 [VELOCITY] Price Velocity: {velocity_chimera:.4f} [{vel_info}]")
-        if gap_liquidita: self.logger.info(f"   ➤ 🚀 RILEVATO LIQUIDITY GAP!")
+        vel_info = 'FRENATA/CADUTA' if price_velocity < 0 else 'ACCELERAZIONE'
+        self.logger.info(f'🔹 [VELOCITY] Price Velocity: {price_velocity:.4f} [{vel_info}]')
+        if gap_liquidita: self.logger.info(f'   ➤ 🚀 RILEVATO LIQUIDITY GAP!')
 
-        atr_sicuro = atr if atr > 0 else (entry_price * 0.005) # Se l'ATR è 0, usa lo 0.5% del prezzo
-        dist_sl_label = (atr_sicuro * 2 / entry_price) if entry_price > 0 else 0.015
-        self.logger.info(f"🔹 [VOLATILITY] SL Consigliato (2x ATR): {dist_sl_label:.2%}")
-        self.logger.info(f"======================================================")
+        atr_sicuro = atr if atr > 0 else (entry_price * 0.005)
+        dist_supportol_label = (atr_sicuro * 2 / entry_price) if entry_price > 0 else 0.015
+        self.logger.info(f'🔹 [VOLATILITY] SL Consigliato (2x ATR): {dist_supportol_label:.2%}')
+        self.logger.info(f'======================================================')
         
-        # Debug per vedere se i dati arrivano al Brain
-        self.logger.info(f"🧠 [BRAIN DEBUG] {ticker_ufficiale} | CVD: {cvd_chimera} | Muro_S: {muro_s_prezzo}")
+        self.logger.info(f'🧠 [BRAIN DEBUG] {ticker_ufficiale} | CVD: {cvd_istantaneo} | Muro_S: {muro_supporto_prezzo}')
         
-        # --- 3. COSTRUZIONE PROMPT "SIGHT-TOTAL" ---
+        # --- 3. COSTRUZIONE PROMPT SIGHT-TOTAL ---
         slippage_medio = spread_p * 1.2 if spread_p > 0 else 0.02
         depth_liquidity = dati_engine.get('market_depth', 0)
 
-        # 1. IL TUO DIZIONARIO INTEGRALE (Qui c'è TUTTO quello che avevi sotto)
         dati_per_gemini = {
-            "asset": ticker_ufficiale,
-            "price": entry_price,
-            "market_health": market_health,
-            "market_regime": market_regime,
-            "attrito_e_rumore": {
-                "atr_perc": round(atr_p, 2),
-                "spread_perc": round(spread_p, 4),
-                "vol_rollante": rolling_vol
+            'asset': ticker_ufficiale,
+            'price': entry_price,
+            'market_health': market_health,
+            'market_regime': market_regime,
+            'attrito_e_rumore': {
+                'atr_perc': round(atr_p, 2),
+                'spread_perc': round(spread_p, 4),
+                'vol_rollante': rolling_vol
             },
-            "flusso_hft_primario": {
-                "vpin": vpin,
-                "hurst": hurst,
-                "rvol": rvol,
-                "book_pressure": bp
+            'flusso_hft_primario': {
+                'vpin': vpin,
+                'hurst': hurst,
+                'rvol': rvol,
+                'book_pressure': bp
             },
-            "forza_momentum": {
-                "rsi": rsi,
-                "z_score": z_score,
-                "funding_z": funding_z,
-                "mac_d": mac_d
+            'forza_momentum': {
+                'rsi': rsi,
+                'z_score': z_score,
+                'funding_z': funding_z,
+                'mac_d': mac_d
             },
-            "mappa_volumetrica": {
-                "poc": poc, "vah": vah, "val": val, 
-                "hvn": hvn[:3], "lvn": lvn[:3]
+            'mappa_volumetrica': {
+                'poc': poc, 'vah': vah, 'val': val, 
+                'hvn': hvn[:3], 'lvn': lvn[:3]
             },
-            "muri_liquidi": {
-                "supporto": {"prezzo": muro_s_prezzo, "distanza_perc": dist_supporto},
-                "resistenza": {"prezzo": muro_r_prezzo, "distanza_perc": dist_resistenza}
+            'muri_liquidi': {
+                'supporto': {'prezzo': muro_supporto_prezzo, 'distanza_perc': dist_supportoupporto},
+                'resistenza': {'prezzo': muro_resistenza_prezzo, 'distanza_perc': dist_resistenzaesistenza}
             },
-            "validazione_hft": {
-                "iceberg_presenti": iceberg,
-                "indice_spoofing": spoofing
+            'validazione_hft': {
+                'iceberg_detected': iceberg,
+                'indice_spoofing': spoofing
             },
-            "microstruttura": {
-                "book_delta": book_delta,
-                "price_velocity": dati_engine.get("price_velocity", 0),
-                "stability": level_stability,
-                "order_flow_imbalance": ofi
+            'microstruttura': {
+                'book_delta': book_delta,
+                'price_velocity': price_velocity,
+                'stability': level_stability,
+                'order_flow_imbalance': ofi
             },
-            "analisi_profonda": {
-                "cvd_divergenza": cvd_divergence,
-                "cvd_istantaneo_chimera": cvd_chimera,
-                "velocity_esplosiva": velocity_chimera,
-                "aggressivita_attuale": aggressivita_flow
+            'analisi_profonda': {
+                'cvd_divergenza': cvd_divergence,
+                'cvd_istantaneo': cvd_istantaneo,
+                'price_velocity': price_velocity,
+                'aggressivita_flow': aggressivita_flow
             },
-            "performance_sistema": {
-                "win_rate": stats_globali.get("win_rate", 0) if isinstance(stats_globali, dict) else 0,
-                "slippage_atteso": slippage_medio
+            'performance_sistema': {
+                'win_rate': stats_globali.get('win_rate', 0) if isinstance(stats_globali, dict) else 0,
+                'slippage_atteso': slippage_medio
             }
         }
 
@@ -884,7 +875,7 @@ class BrainLA:
         prompt = (
             f"{json_input}\n\n" # Questo inserisce TUTTI i dati in un colpo solo e senza errori di sintassi
             f"--- SINTESI REAL-TIME CHIMERA ---\n"
-            f"CVD: {cvd_chimera} | Velocity: {velocity_chimera} | VPIN: {vpin}\n"
+            f"CVD: {cvd_istantaneo} | Velocity: {price_velocity} | VPIN: {vpin}\n"
             "{\n"
             f' "asset": "{ticker_ufficiale}", "price": {entry_price},\n'
             f' "market_health": {market_health}, "market_regime": "{market_regime}",\n'
@@ -893,8 +884,8 @@ class BrainLA:
             f' "forza_momentum": {{ "rsi": {rsi}, "z_score": {z_score}, "funding_z": {funding_z}, "mac_d": {mac_d} }},\n'
             f' "mappa_volumetrica": {{ "poc": {poc}, "vah": {vah}, "val": {val}, "hvn": "{hvn[:3]}", "lvn": "{lvn[:3]}" }},\n'
             f' "muri_liquidi": {{\n'
-            f'    "supporto": {{ "prezzo": {muro_s_prezzo}, "distanza_perc": {dist_supporto} }},\n'
-            f'    "resistenza": {{ "prezzo": {muro_r_prezzo}, "distanza_perc": {dist_resistenza} }}\n'
+            f'    "supporto": {{ "prezzo": {muro_supporto_prezzo}, "distanza_perc": {dist_supporto} }},\n'
+            f'    "resistenza": {{ "prezzo": {muro_resistenza_prezzo}, "distanza_perc": {dist_resistenza} }}\n'
             f' }},\n'
             f' "narrativa": "{tech_narrative}", "macro": {{ "sentiment": "{macro_sentiment}", "regime": "{dati_engine.get("macro_regime", "N/A")}" }},\n'
             f' "performance": {{ "win_rate": {stats_globali.get("win_rate",0) if isinstance(stats_globali, dict) else 0}, "recente": "{memoria_reale[:200].replace(chr(10)," ")}" }},\n'
@@ -909,8 +900,8 @@ class BrainLA:
             f'    "liquidity_gap": {gap_liquidita} \n'
             f' }},\n'
             f' "analisi_profonda": {{ \n'
-            f'    "cvd_divergenza": {cvd_divergence}, "delta_cumulativo_storico": {cvd_value}, \n'
-            f'    "cvd_istantaneo_chimera": {cvd_chimera}, "velocity_esplosiva": {velocity_chimera}, \n' 
+            f'    "cvd_divergenza": {cvd_divergence}, "cvd_istantaneo": {cvd_istantaneo}, \n'
+            f'    "cvd_istantaneo": {cvd_istantaneo}, "price_velocity": {price_velocity}, \n' 
             f'    "aggressivita_attuale": "{aggressivita_flow}", \n' 
             f'    "freschezza_dato_secondi": {signal_age}, "efficiency_prezzo": {market_efficiency} \n'
             f' }}, \n'
@@ -925,8 +916,8 @@ class BrainLA:
             f' }}\n'
             "}\n\n"
             f"--- SINTESI REAL-TIME CHIMERA ---\n"
-            f"CVD: {cvd_chimera} | Velocity: {velocity_chimera} | VPIN: {vpin}\n"
-            f"Muri: S {muro_s_prezzo} ({dist_supporto}%) | R {muro_r_prezzo} ({dist_resistenza}%)\n\n"
+            f"CVD: {cvd_istantaneo} | Velocity: {price_velocity} | VPIN: {vpin}\n"
+            f"Muri: S {muro_supporto_prezzo} ({dist_supporto}%) | R {muro_resistenza_prezzo} ({dist_resistenza}%)\n\n"
             f"--- DATI DI MERCATO AGGIUNTIVI ---\n"
             f"Prezzo: {entry_price} | ATR%: {atr_p:.2f}% | Spread: {spread_p:.4f}%\n"
             f"VWAP: {vwap} | POC: {poc} | VA: [{val}-{vah}]\n\n"
@@ -937,7 +928,7 @@ class BrainLA:
             f"--- [DETTAGLIO 15M - AREA DI VALORE] ---\n{json.dumps(livelli_15m, indent=2)}\n\n"
             f"--- [TRIGGER FLUSSO - ESECUZIONE] ---\n{json.dumps(trigger_flusso_istantaneo, indent=2)}\n\n"
             "REGOLE MANDATORIE PROJECT CHIMERA (UNLEASHED):\n"
-            "1. VELOCITY OVERRIDE: Se 'velocity_esplosiva' > 0.0005, ignora ogni dubbio. Il momentum ha la priorità assoluta su muri e gerarchie.\n"
+            "1. VELOCITY OVERRIDE: Se 'price_velocity' > 0.0005, ignora ogni dubbio. Il momentum ha la priorità assoluta su muri e gerarchie.\n"
             "2. STOP LOSS ADATTIVO: La distanza dell'1.2% è solo un riferimento. Se esiste un muro volumetrico o un'Area di Valore a distanza inferiore (es. 0.7%), usa quella protezione. È vietato dare voto 0 solo perché lo SL è vicino.\n"
             "3. VPIN OPPORTUNITY: Un VPIN alto (>0.8) indica che il bot deve stare all'erta, non che deve stare FLAT. Cavalca l'instabilità se la direzione è chiara.\n"
             "4. NO GHOSTING: Se i log indicano 'OCCASIONE PERSA', significa che hai fallito. Devi assegnare un voto > 6 ogni volta che rilevi un'accelerazione di prezzo (Velocity) concorde con il CVD.\n"
@@ -978,10 +969,10 @@ class BrainLA:
             decision['razionale'] += " | Counter-trend: Sizing ridotto."
 
         # SBLOCCO FORZATO VELOCITY
-        if abs(velocity_chimera) > 0.0006 and decision.get('direzione') != "FLAT":
+        if abs(price_velocity) > 0.0006 and decision.get('direzione') != "FLAT":
             if decision.get('voto', 0) < 6:
                 decision['voto'] = 7
-                decision['razionale'] += f" | ⚡ FORZA CHIMERA: Velocity ({velocity_chimera:.6f}) domina."
+                decision['razionale'] += f" | ⚡ FORZA CHIMERA: Velocity ({price_velocity:.6f}) domina."
 
         # --- 6. LIVELLI FINALI E TELEGRAM ---
         direzione_ia = decision.get("direzione", "FLAT")
@@ -1040,7 +1031,7 @@ class BrainLA:
         cvd_c = dati_engine.get('cvd_divergence', 1.0)
         dfp = dati_engine.get('delta_footprint', 0)
         # Usiamo price_velocity come richiesto dal progetto Chimera
-        vel = dati_engine.get('price_velocity', dati_engine.get('trade_velocity', 0))
+        price_velocity = dati_engine.get('price_velocity', dati_engine.get('trade_velocity', 0))
         
         if isinstance(cvd_c, (int, float)) and cvd_c < 0.3:
             stato_div = "FORTE DIVERGENZA" if cvd_c < 0 else "DEBOLEZZA"
@@ -1048,7 +1039,7 @@ class BrainLA:
         else:
             n.append(f"SALUTE_TREND: Sano ({cvd_c:.2f}).")
             
-        n.append(f"FLUSSI: VPIN {vpin:.4f}. Delta Footprint: {dfp}. Velocity: {vel:.6f} %/s.")
+        n.append(f"FLUSSI: VPIN {vpin:.4f}. Delta Footprint: {dfp}. Velocity: {price_velocity:.6f} %/s.")
 
         # 3. ANALISI ISTITUZIONALE (Whales, Driver, Absorption)
         whale = dati_engine.get('whale_delta', 0)
@@ -1057,13 +1048,13 @@ class BrainLA:
         n.append(f"ISTITUZIONALE: Whale Delta: {whale}. Driver: {driver}. Absorption: {abs_t}.")
 
         # 4. ORDERBOOK E MURI (Persistenza & Anti-Spoofing)
-        m_s = dati_engine.get('muro_supporto', {})
-        m_r = dati_engine.get('muro_resistenza', {})
+        m_s = dati_engine.get('muro_supportoupporto', {})
+        m_r = dati_engine.get('muro_resistenzaesistenza', {})
         l_walls = dati_engine.get('liquidity_walls', {})
         
         # Estrazione sicura dai dizionari per evitare crash se i dati mancano
-        p_buy = m_s.get('prezzo', l_walls.get('muro_supporto', 'N/A'))
-        p_sell = m_r.get('prezzo', l_walls.get('muro_resistenza', 'N/A'))
+        p_buy = m_s.get('prezzo', l_walls.get('muro_supportoupporto', 'N/A'))
+        p_sell = m_r.get('prezzo', l_walls.get('muro_resistenzaesistenza', 'N/A'))
         
         n.append(f"MURI_BUY: {p_buy} (Stato: {m_s.get('stato', 'N/A')}, Affidabilità: {m_s.get('affidabilita', '0%')}).")
         n.append(f"MURI_SELL: {p_sell} (Stato: {m_r.get('stato', 'N/A')}, Affidabilità: {m_r.get('affidabilita', '0%')}).")
@@ -1287,8 +1278,8 @@ class BrainLA:
         # --- 1. ESTRAZIONE DATI REALI (AGGANCIO AI LOG ENGINE) ---
         # Recuperiamo i dati che nei log vedevamo a 0 per assicurarci che siano pieni
         entry_price = dati_engine.get('price', 0)
-        cvd_chimera = dati_engine.get('cvd_istantaneo', dati_engine.get('cvd', 0))
-        velocity_chimera = dati_engine.get('price_velocity', dati_engine.get('velocity', 0))
+        cvd_istantaneo = dati_engine.get('cvd_istantaneo', dati_engine.get('cvd_istantaneo', dati_engine.get('cvd', 0)))
+        price_velocity = dati_engine.get('price_velocity', dati_engine.get('velocity', 0))
         vpin = dati_engine.get('vpin', 0)
         
         # --- 2. COSTRUZIONE JSON_INPUT (IL CUORE DI CHIMERA) ---
@@ -1298,12 +1289,12 @@ class BrainLA:
             "market_health": dati_engine.get('market_health', 0.5),
             "flusso_hft": {
                 "vpin": vpin,
-                "cvd_istantaneo": cvd_chimera,
-                "velocity": velocity_chimera,
+                "cvd_istantaneo": cvd_istantaneo,
+                "velocity": price_velocity,
                 "aggressivita": dati_engine.get('aggressivita_flow', "Neutral")
             },
             "microstruttura": {
-                "price_velocity": velocity_chimera,
+                "price_velocity": price_velocity,
                 "indice_spoofing": dati_engine.get('indice_spoofing', 0),
                 "iceberg": dati_engine.get('iceberg_presenti', 0)
             }
@@ -1314,7 +1305,7 @@ class BrainLA:
         dati_engine['json_input'] = json.dumps(dati_per_gemini, indent=2)
 
         # --- 3. LOG DI CONTROLLO (PER EVITARE I VOTI 0/10) ---
-        print(f"🧠 [BRAIN DEBUG] {asset_name} | CVD: {cvd_chimera} | Vel: {velocity_chimera}")
+        print(f"🧠 [BRAIN DEBUG] {asset_name} | CVD: {cvd_istantaneo} | Vel: {price_velocity}")
 
         # --- 4. CHIAMATA ALLA STRATEGIA DA 1000 RIGHE ---
         return self.full_global_strategy(

@@ -164,17 +164,17 @@ def main():
                             "price_velocity": res.get('price_velocity', 0.0001),
                             "spread_perc": res.get('spread_perc', 0.01),
                             "order_flow_advanced": {
-                                "cvd": float(res.get('cvd_reale', res.get('cvd', 0))), 
+                                "cvd_istantaneo": float(res.get('cvd_istantaneo', res.get('cvd', 0))), 
                                 "vpin_toxicity": float(res.get('vpin_toxicity', 0.05))
                             },
                             "microstruttura_hft": {
                                 "muri_liquidita": muri,
-                                "spoofing_index": float(res.get('indice_spoofing', 0))
+                                "indice_spoofing": float(res.get('indice_spoofing', 0))
                             }
                         }
                         
                         # Log di verifica pre-invio
-                        logger.info(f"🧠 DATI INVIATI A GEMINI [{asset}]: CVD={dati_mercato_chimera['order_flow_advanced']['cvd']:.2f}, ATR={atr_sicuro:.2f}")
+                        logger.info(f"🧠 DATI INVIATI A GEMINI [{asset}]: CVD={dati_mercato_chimera['order_flow_advanced'].get('cvd_istantaneo', 0.0):.2f}, ATR={atr_sicuro:.2f}")
     
                         history = fe.get_recent_summary()
                         decision = brain.full_global_strategy(

@@ -9,6 +9,7 @@ import requests
 import pandas as pd
 import ccxt
 import numpy as np
+from core import config_la
 # IMPORTAZIONE CORRETTA: Prendiamo la funzione specifica dal file asset_list
 from core.asset_list import get_ticker, get_config 
 
@@ -73,7 +74,7 @@ class EngineLA:
             
             return False
         except Exception as e:
-            self.logger.warning(f"⚠️ Sentinella momentaneamente cieca per {ticker}: {e}")
+            self.logger.warning(f" ️ Sentinella momentaneamente cieca per {ticker}: {e}")
             return False
     
     def get_market_data(self, ticker):
@@ -89,11 +90,11 @@ class EngineLA:
             # 1. ANALISI TRADE & VELOCITY (Project Chimera)
             # Qui otteniamo i dati REALI (es. -2.87)
             flow_data = self.get_detailed_order_flow(ticker)
-            res['cvd'] = flow_data['cvd']
-            res['cvd_reale'] = flow_data['cvd']
-            res['price_velocity'] = flow_data['price_velocity']
-            res['is_explosive'] = flow_data['is_explosive']
-            res['aggressivita'] = flow_data['aggressività']
+            res['cvd_istantaneo'] = float(flow_data.get('cvd_istantaneo', 0.0))
+            res['cvd_reale'] = float(flow_data.get('cvd_istantaneo', 0.0))
+            res['price_velocity'] = float(flow_data.get('price_velocity', 0.0))
+            res['is_explosive'] = flow_data.get('is_explosive', False)
+            res['aggressivita'] = flow_data.get('aggressivita', 'NEUTRAL')
             # Recuperiamo il VPIN se presente in flow_data, altrimenti usiamo 0
             res['vpin'] = flow_data.get('vpin', 0.0)
             
@@ -139,13 +140,13 @@ class EngineLA:
 
             # --- LOG ISTITUZIONALE PER SBLOCCO GEMINI ---
             self.logger.info(
-                f"📊 [DATA_DUMP] {ticker} | CVD: {res['cvd']} | Vel: {res['price_velocity']} | "
+                f"📊 [DATA_DUMP] {ticker} | CVD: {flow_data.get('cvd_istantaneo', 0.0)} | Vel: {res['price_velocity']} | "
                 f"Muro_S: {res['muro_supporto']} ({res['dist_supporto']:.2f}%) | "
                 f"Muro_R: {res['muro_resistenza']} ({res['dist_resistenza']:.2f}%) | "
                 f"VPIN: {res['vpin']:.4f} | Spoofing: {res['indice_spoofing']:.2f}"
             )
             
-            self.logger.info(f"🔹 [ORDER FLOW] CVD: {res['cvd']:+.2f} | VPIN: {res['vpin']:.4f}")
+            self.logger.info(f"🔹 [ORDER FLOW] CVD: {flow_data.get('cvd_istantaneo', 0.0):+.2f} | VPIN: {res['vpin']:.4f}")
             self.logger.info(f"🏥 MARKET HEALTH: {res['health_data']['market_health_index']} | REGIME: {res['market_regime']}")
             
             return res
@@ -258,7 +259,7 @@ class EngineLA:
             return round(min(vpin_score, 1.0), 4)
             
         except Exception as e:
-            self.logger.debug(f"⚠️ Errore calcolo VPIN: {e}")
+            self.logger.debug(f" ️ Errore calcolo VPIN: {e}")
             return 0.5
 
     def get_market_health_score(self, ticker, order_flow_data):
@@ -289,7 +290,7 @@ class EngineLA:
                 "status": "HEALTHY" if health_score > 0.6 else "UNSTABLE"
             }
         except Exception as e:
-            self.logger.error(f"❌ Errore Health Score su {ticker}: {e}")
+            self.logger.error(f"  Errore Health Score su {ticker}: {e}")
             return {"market_health_index": 0.5, "vpin_value": 0.0, "status": "UNKNOWN"}
     
     def get_full_market_data(self, ticker):
@@ -340,12 +341,12 @@ class EngineLA:
                     'cvd_reale': 0.0
                 }
             except Exception as e_ft:
-                self.logger.debug(f"⚠️ fetch_ticker fallback fallito per {ticker}: {e_ft}")
+                self.logger.debug(f" ️ fetch_ticker fallback fallito per {ticker}: {e_ft}")
 
             return {'price': 0.0, 'close': 0.0, 'atr': 0.0, 'liquidity_pools': []}
 
         except Exception as e:
-            self.logger.error(f"❌ Errore critico get_full_market_data per {ticker}: {e}")
+            self.logger.error(f"  Errore critico get_full_market_data per {ticker}: {e}")
             return {'price': 0.0, 'close': 0.0, 'atr': 0.0, 'liquidity_pools': []}
     
     def analizza_asset(self, ticker):
@@ -397,7 +398,7 @@ class EngineLA:
                 "muro_resistenza": w_ask_p, "vol_resistenza": w_ask_v, "dist_resistenza": d_ask
             }
         except Exception as e:
-            self.logger.warning(f"⚠️ Errore Liquidity Walls: {e}")
+            self.logger.warning(f" ️ Errore Liquidity Walls: {e}")
             return {"muro_supporto": 0, "dist_supporto": 0.0, "muro_resistenza": 0, "dist_resistenza": 0.0}
     def get_liquidity_pools(self, ticker):
         """
@@ -609,7 +610,7 @@ class EngineLA:
             pos = self.exchange.private_post_openpositions()
             return pos.get('result', {})
         except Exception as e:
-            self.logger.error(f"❌ Errore critico recupero posizioni Kraken: {e}")
+            self.logger.error(f"  Errore critico recupero posizioni Kraken: {e}")
             return {}
             
     def _calcola_delta_footprint(self, ticker):
@@ -729,15 +730,15 @@ class EngineLA:
             # --- PROTEZIONE CHIMERA ---
             if not trades or len(trades) < 2:
                 return {
-                    'cvd': 0.0, 'vpin': 0.0, 'momentum_perc': 0.0, 'price_velocity': 0.0, 
-                    'is_explosive': False, 'aggressività': "NEUTRAL"
+                    'cvd_istantaneo': 0.0, 'vpin': 0.0, 'momentum_perc': 0.0, 'price_velocity': 0.0, 
+                    'is_explosive': False, 'aggressivita_flow': "NEUTRAL"
                 }
             
             # 3. Creazione DataFrame
             df = pd.DataFrame(trades)
             
             if df.empty or 'side' not in df.columns:
-                return {'cvd': 0.0, 'vpin': 0.0, 'momentum_perc': 0.0, 'price_velocity': 0.0, 'is_explosive': False, 'aggressività': "NEUTRAL"}
+                return {'cvd_istantaneo': 0.0, 'vpin': 0.0, 'momentum_perc': 0.0, 'price_velocity': 0.0, 'is_explosive': False, 'aggressivita_flow': "NEUTRAL"}
 
             # --- [LOGICA CHIMERA: DATA CLEANING] ---
             df['price'] = pd.to_numeric(df['price'], errors='coerce')
@@ -764,19 +765,19 @@ class EngineLA:
             vol_totale = df['amount'].sum()
             vpin = abs(cvd) / vol_totale if vol_totale > 0 else 0.0
             
-            self.logger.info(f"⚡ CHIMERA: Vel {velocity:.6f} %/s | CVD: {cvd:.4f} | VPIN: {vpin:.4f}")
+            self.logger.info(f"  CHIMERA: Vel {velocity:.6f} %/s | CVD: {cvd:.4f} | VPIN: {vpin:.4f}")
 
             return {
-                'cvd': round(cvd, 4),
+                'cvd_istantaneo': round(cvd, 4),
                 'vpin': round(vpin, 4), # <--- ORA È PRESENTE!
                 'momentum_perc': round(momentum, 4),
                 'price_velocity': round(velocity, 6),
                 'is_explosive': is_explosive,
-                'aggressività': "BUYERS" if cvd > 0 else "SELLERS"
+                'aggressivita_flow': "BUYERS" if cvd > 0 else "SELLERS"
             }
         except Exception as e:
             self.logger.error(f"🔴 Errore calcolo Order Flow su {ticker}: {e}")
-            return {'cvd': 0.0, 'vpin': 0.0, 'momentum_perc': 0.0, 'price_velocity': 0.0, 'is_explosive': False, 'aggressività': "NEUTRAL"}
+            return {'cvd_istantaneo': 0.0, 'vpin': 0.0, 'momentum_perc': 0.0, 'price_velocity': 0.0, 'is_explosive': False, 'aggressivita_flow': "NEUTRAL"}
     
     def _detect_hft_anomalies(self, ticker, ob):
         """Rileva tracce di algoritmi HFT e manipolazioni (Spoofing/Iceberg)."""
