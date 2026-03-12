@@ -324,6 +324,227 @@ class PerformerLA:
         except Exception as e:
             self.logger.error(f"❌ Eccezione critica {asset}: {e}")
             return {'success': False, 'error': str(e)}
+
+
+       def gestisci_take_profit(self, asset, direzione_aperta, nuovo_tp, size, leverage, tp_id=None):
+        """
+        Versione migliorata GESTIONE DINAMICA TAKE PROFIT.
+        - Se nuovo_tp is None: cancella il TP esistente (fase 2).
+        - Se nuovo_tp ha valore: aggiorna il TP cancellando il precedente e creando un nuovo limit.
+        Restituisce il nuovo tp_id (string) se creato, None altrimenti.
+        """
+        try:
+            from core.asset_list import ASSET_CONFIG, get_ticker as get_ticker_local
+            symbol = get_ticker_local(asset)
+            asset_cfg = ASSET_CONFIG.get(asset, {})
+            prec = asset_cfg.get('precision', 2)
+
+            # Forza più decimali per coppie crypto-crypto (quote non fiat)
+            if symbol and "/" in symbol:
+                try:
+                    _, quote = symbol.split("/")
+                    if quote.upper() not in ("USD", "EUR", "USDT", "ZUSD"):
+                        prec = max(prec, 5)
+                except Exception:
+                    pass
+
+            size_str = "{:.8f}".format(float(size)).rstrip('0').rstrip('.')
+
+            # --- 1. CANCELLAZIONE TP ESISTENTE ---
+            if tp_id:
+                try:
+                    # Prima prova cancel_order standard (richiede symbol)
+                    self.exchange.cancel_order(tp_id, symbol)
+                    self.logger.info(f"🗑️ Take Profit precedente {tp_id} rimosso.")
+                except Exception as e_cancel:
+                    self.logger.warning(f"⚠️ Impossibile cancellare TP {tp_id} tramite cancel_order: {e_cancel}. Provo fallback raw...")
+                    # Fallback Kraken raw (se disponibile)
+                    try:
+                        if hasattr(self.exchange, 'private_post_cancel_order'):
+                            payload = {'txid': [tp_id]}
+                            self.exchange.private_post_cancel_order(payload)
+                            self.logger.info(f"🗑️ Take Profit precedente {tp_id} rimosso via private_post_cancel_order.")
+                    except Exception as e_fb:
+                        self.logger.warning(f"⚠️ Fallback cancel TP fallito: {e_fb}")
+
+            # --- 2. LOGICA FASE 2 (Lascia correre) ---
+            if nuovo_tp is None:
+                self.logger.info(f"🚀 FASE 2 ATTIVATA per {asset}: Take Profit rimosso, il trade corre con solo SL.")
+                return None
+
+            # --- 3. AGGIORNAMENTO TP (Spostamento) ---
+            prezzo_pulito = "{:.{}f}".format(float(nuovo_tp), prec)
+            side_chiusura = 'sell' if direzione_aperta.upper() == 'BUY' else 'buy'
+
+            self.logger.info(f"🎯 Aggiornamento Take Profit per {asset} a {prezzo_pulito} (symbol={symbol}, prec={prec})...")
+
+            try:
+                # Creazione nuovo ordine Limit per il Take Profit
+                nuovo_ordine = self.exchange.create_order(
+                    symbol=symbol,
+                    type='limit',
+                    side=side_chiusura,
+                    amount=float(size_str),
+                    price=prezzo_pulito,
+                    params={'leverage': leverage}
+                )
+
+                if nuovo_ordine and ('id' in nuovo_ordine or 'txid' in nuovo_ordine):
+                    new_id = nuovo_ordine.get('id') or nuovo_ordine.get('txid')
+                    if isinstance(new_id, list):
+                        new_id = new_id[0]
+                    self.logger.info(f"✅ Nuovo Take Profit ATTIVO: {new_id}")
+                    return new_id
+
+                if isinstance(nuovo_ordine, dict) and 'result' in nuovo_ordine and 'txid' in nuovo_ordine['result']:
+                    tx = nuovo_ordine['result']['txid'][0]
+                    self.logger.info(f"✅ Nuovo Take Profit ATTIVO (raw): {tx}")
+                    return tx
+
+                self.logger.warning(f"⚠️ Creazione TP non ha restituito ID: {nuovo_ordine}")
+                return None
+
+            except Exception as e:
+                self.logger.error(f"🔴 ERRORE AGGIORNAMENTO TAKE PROFIT {asset}: {e}")
+                return None
+
+        except Exception as e:
+            self.logger.error(f"🔴 ERRORE GESTISCI_TP PREPARAZIONE {asset}: {e}")
+            return None
+
+    def sposta_stop_loss(self, asset, direzione_aperta, nuovo_sl, size, leverage=1, sl_id=None):
+        """
+        Versione migliorata sposta_stop_loss:
+        - Cancella l'ordine precedente (se possibile) e crea uno nuovo.
+        - Retry automatico decrescendo la precisione se Kraken rifiuta 'Invalid price'.
+        - Ritorna txid (string) se disponibile, True se ok senza txid, False su errore.
+        """
+        try:
+            from core import asset_list as al_config
+            from core.asset_list import ASSET_CONFIG, get_ticker as get_ticker_local
+
+            symbol = al_config.get_ticker(asset)
+            asset_cfg = ASSET_CONFIG.get(asset, {})
+
+            # Calcolo precisione: priorità ASSET_CONFIG ma forziamo >=5 per crypto-crypto non fiat
+            prec = asset_cfg.get('precision', 2)
+            if symbol and "/" in symbol:
+                _, quote = symbol.split("/")
+                if quote.upper() not in ("USD", "EUR", "USDT", "ZUSD"):
+                    prec = max(prec, 5)
+
+            size_str = "{:.8f}".format(float(size)).rstrip('0').rstrip('.')
+
+            self.logger.info(f"🛡️ Tentativo spostamento SL per {asset} ({symbol}) a {nuovo_sl} (prec iniziale: {prec})...")
+
+            # --- 1. PULIZIA PREVENTIVA (cancellazione SL precedente) ---
+            try:
+                if sl_id:
+                    try:
+                        # Primo tentativo con CCXT standard
+                        self.exchange.cancel_order(sl_id, symbol)
+                        self.logger.info(f"🗑️ Vecchio SL {sl_id} cancellato tramite cancel_order.")
+                    except Exception as e_cancel_ccxt:
+                        self.logger.warning(f"⚠️ cancel_order fallito per {sl_id}: {e_cancel_ccxt}. Provo fallback Kraken TXID...")
+                        # Fallback: tentativo con endpoint privato Kraken (se presente)
+                        try:
+                            if hasattr(self.exchange, 'private_post_cancel_order'):
+                                payload = {'txid': [sl_id]}
+                                self.exchange.private_post_cancel_order(payload)
+                                self.logger.info(f"🗑️ Vecchio SL {sl_id} cancellato tramite private_post_cancel_order.")
+                            else:
+                                raise Exception("Nessun endpoint private_post_cancel_order disponibile")
+                        except Exception as e_cancel_kraken:
+                            self.logger.warning(f"⚠️ Fallback cancelazione TXID fallito: {e_cancel_kraken}")
+                else:
+                    # Se non abbiamo l'ID, pulizia generica degli ordini aperti per il symbol
+                    try:
+                        self.pulizia_totale_ordini(asset)
+                        self.logger.info(f"🧹 Pulizia totale ordini eseguita per {symbol}.")
+                    except Exception as e_pul:
+                        self.logger.warning(f"⚠️ Pulizia totale ordini fallita: {e_pul}")
+            except Exception as e_cancel_gen:
+                self.logger.warning(f"⚠️ Nota: Cancellazione preventiva ha sollevato errore: {e_cancel_gen}")
+
+            # --- 2. CREAZIONE NUOVO SL (con retry decrescente precisione) ---
+            side_chiusura = 'sell' if direzione_aperta.upper() == 'BUY' else 'buy'
+            params_nuovo = {
+                'pair': symbol.replace('/', ''),
+                'type': side_chiusura,
+                'ordertype': 'stop-loss',
+                'volume': size_str,
+                'price': "{:.{}f}".format(float(nuovo_sl), prec),
+                'leverage': str(leverage)
+            }
+
+            last_exception = None
+            attempt = 0
+            max_attempts = prec + 2 if prec >= 0 else 3  # numero tentativi basato sulla precisione
+
+            while attempt < max_attempts:
+                attempt += 1
+                try:
+                    self.logger.info(f"📡 Invio SL (attempt {attempt}/{max_attempts}) a Kraken: price={params_nuovo['price']}, volume={params_nuovo['volume']}")
+                    res = self.exchange.private_post_addorder(params_nuovo)
+                    # Se non solleva eccezione, prosegui
+                    if res and isinstance(res, dict) and 'result' in res and 'txid' in res['result']:
+                        nuovo_txid = res['result']['txid'][0]
+                        self.logger.info(f"✅ Nuovo Stop Loss ATTIVO per {asset}: {nuovo_txid}")
+                        return nuovo_txid
+                    # Se la risposta non contiene txid, ritorniamo True come segnale di successo generico
+                    if res and ('error' in res and res['error']):
+                        last_exception = Exception(f"Errore API Kraken: {res.get('error')}")
+                        raise last_exception
+                    return True
+                except Exception as e_retry:
+                    last_exception = e_retry
+                    msg = str(e_retry).lower()
+                    # Se sembra un problema di price/precisione, scala la precisione
+                    if ("invalid price" in msg or "precision" in msg or "price" in msg) and params_nuovo.get('price'):
+                        try:
+                            # Riduci la precisione di 1 e ricostruisci il campo price
+                            prec = max(0, prec - 1)
+                            params_nuovo['price'] = "{:.{}f}".format(float(nuovo_sl), prec)
+                            self.logger.warning(f"🔄 Errore price/precisione rilevato. Riprovo con precisione ridotta: {prec} decimali -> price {params_nuovo['price']}")
+                            time.sleep(0.5)
+                            continue
+                        except Exception as e_prec:
+                            self.logger.warning(f"⚠️ Errore ricalcolo precisione: {e_prec}")
+                            break
+                    # Se l'errore è di margine o altro non recuperabile, rilancia
+                    self.logger.error(f"🔴 Tentativo SL fallito (attempt {attempt}): {e_retry}")
+                    # breve sleep prima del prossimo tentativo non-precisione
+                    time.sleep(0.5)
+                    continue
+
+            # Se siamo qui, tutti i tentativi sono falliti
+            if last_exception:
+                self.logger.error(f"🔴 ERRORE GLOBALE creazione SL per {asset}: {last_exception}")
+            return False
+
+        except Exception as e:
+            self.logger.error(f"🔴 ERRORE GESTISCI_TP PREPARAZIONE {asset}: {e}")
+            return False
+
+    def aggiorna_stop_loss(self, asset, direzione, nuovo_sl, size, leverage=1, sl_id=None):
+        """
+        Wrapper compatibile con TradeManager: aggiorna (cancella+ricrea) lo SL su Kraken.
+        Restituisce True se l'operazione è riuscita.
+        """
+        try:
+            res = self.sposta_stop_loss(
+                asset=asset,
+                direzione_aperta=direzione,
+                nuovo_sl=nuovo_sl,
+                size=size,
+                leverage=leverage,
+                sl_id=sl_id
+            )
+            # sposta_stop_loss ritorna txid oppure True/False; normalizziamo a bool
+            return bool(res)
+        except Exception as e:
+            self.logger.error(f"🔴 ERRORE aggiorna_stop_loss per {asset}: {e}")
+            return False
     
     def pulizia_totale_ordini(self, asset):
         """ Rimuove ogni ordine orfano per l'asset specificato """
