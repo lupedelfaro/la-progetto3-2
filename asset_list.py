@@ -4,20 +4,20 @@ L&A Institutional Bot - AssetList
 FIX: Implementazione mapping Futures e correzione Ticker per EngineLA.
 """
 
-ASSET_PRINCIPALI = ["XXBTZUSD", "XETHZUSD", "XETHXXBT"]
+ASSET_PRINCIPALI = ["XXBTZUSD", "XETHZUSD",]
 
 # Mapping per CCXT e chiamate API dirette
 ASSET_MAPPING = {
     "XXBTZUSD": "BTC/USD",
     "XETHZUSD": "ETH/USD",
-    "XETHXXBT": "ETH/BTC"
+    #"XETHXXBT": "ETH/BTC"
 }
 
 # Mapping specifico per i Futures di Kraken (necessario per Funding/OI)
 FUTURES_MAPPING = {
     "XXBTZUSD": "PI_XBTUSD",
     "XETHZUSD": "PI_ETHUSD",
-    "XETHXXBT": "FI_ETHUSD" # Il cross non ha un future diretto, usiamo ETH come proxy
+    #"XETHXXBT": "FI_ETHUSD" # Il cross non ha un future diretto, usiamo ETH come proxy
 }
 
 ASSET_CONFIG = {
@@ -25,25 +25,25 @@ ASSET_CONFIG = {
         "precision": 1,
         "vol_precision": 8,
         "min_size": 0.0001,
-        "max_leverage": 5,
+        "max_leverage": 10,
         "is_cross": False
     },
     "XETHZUSD": {
         "precision": 2,
         "vol_precision": 2,
         "min_size": 0.01,
-        "max_leverage": 5,
+        "max_leverage": 10,
         "is_cross": False
-    },
-    "XETHXXBT": {
-        "ticker": "ETH/BTC",
-        "precision": 5,
-        "vol_precision": 4,
-        "min_size": 0.01,
-        "max_leverage": 1, # Spesso leva non disponibile su cross crypto-crypto
-        "is_cross": True,
-        "quote_asset": "XXBTZUSD"
     }
+    #"XETHXXBT": {
+        #"ticker": "ETH/BTC",
+        #"precision": 5,
+        #"vol_precision": 4,
+        #"min_size": 0.01,
+        #"max_leverage": 5, # Spesso leva non disponibile su cross crypto-crypto
+        #"is_cross": True,
+        #"quote_asset": "XXBTZUSD"
+    #}
 }
 
 def is_asset_supported(asset_name):
@@ -67,6 +67,20 @@ def get_ticker(asset_name):
             
     # Caso 3: Non è nel mapping, restituiamo l'originale
     return name_upper
+
+def get_human_name(kraken_ticker):
+    """
+    Trasforma codici Kraken in nomi umani (es. XXBTZUSD -> BTC/USD)
+    """
+    ticker_upper = kraken_ticker.upper()
+    
+    # Se il ticker è una chiave nel mapping, restituiamo il suo nome umano
+    if ticker_upper in ASSET_MAPPING:
+        return ASSET_MAPPING[ticker_upper]
+        
+    # Se non lo troviamo, restituiamo il ticker originale
+    return ticker_upper
+
 def get_futures_ticker(asset_name):
     """Restituisce il ticker per le API Futures di Kraken."""
     return FUTURES_MAPPING.get(asset_name.upper())

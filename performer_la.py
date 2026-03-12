@@ -101,34 +101,61 @@ class PerformerLA:
             return None
 
     def get_open_positions_real(self):
-        """ Recupera posizioni e ordini con MATCH AGGRESSIVO e NORMALIZZAZIONE. """
+        """ 
+        Recupera posizioni e ordini usando esclusivamente i codici Kraken originali. 
+        Restituisce un dizionario mappato sui TICKER per sincronizzazione immediata.
+        """
         try:
+            # 1. Recupero posizioni aperte a margine
             pos_res = self.exchange.private_post_openpositions()
-            positions = pos_res.get('result', {})
-            if not positions: return {}
+            raw_positions = pos_res.get('result', {})
+            if not raw_positions: return {}
 
+            # 2. Recupero ordini aperti per SL/TP
             orders_res = self.exchange.private_post_openorders()
             open_orders = orders_res.get('result', {}).get('open', {})
 
-            for p_id, p_data in positions.items():
+            # Dizionario finale: Chiave = Ticker (es. XXBTZUSD)
+            mapped_positions = {}
+
+            for p_id, p_data in raw_positions.items():
+                # Inizializzazione campi protezione
                 p_data['has_sl'] = False
                 p_data['has_tp'] = False
-                p_norm = self._normalize_ticker(p_data.get('pair', ''))
+                p_data['sl_id_kraken'] = None
+                p_data['tp_id_kraken'] = None
+                p_data['pos_txid'] = p_id  # Salviamo l'ID reale della posizione
+                
+                ticker_k = p_data.get('pair', '')
+                if not ticker_k: continue
 
+                # 3. Matching chirurgico degli ordini aperti
                 for o_id, o_data in open_orders.items():
                     descr = o_data.get('descr', {})
-                    o_norm = self._normalize_ticker(descr.get('pair', ''))
+                    o_ticker = descr.get('pair', '')
                     
-                    if o_norm == p_norm:
+                    if o_ticker == ticker_k:
                         tipo = str(descr.get('ordertype', '')).lower()
-                        if 'stop' in tipo: p_data['has_sl'] = True
-                        if 'profit' in tipo or 'limit' in tipo: p_data['has_tp'] = True
+                        
+                        # Cattura ID Stop Loss
+                        if 'stop' in tipo: 
+                            p_data['has_sl'] = True
+                            p_data['sl_id_kraken'] = o_id
+                            
+                        # Cattura ID Take Profit (limit o take-profit)
+                        elif 'profit' in tipo or 'limit' in tipo: 
+                            p_data['has_tp'] = True
+                            p_data['tp_id_kraken'] = o_id
+                
+                # Inseriamo nel dizionario usando il TICKER come chiave
+                mapped_positions[ticker_k] = p_data
             
-            return positions
+            return mapped_positions
+            
         except Exception as e:
-            self.logger.error(f"❌ Errore critico nel matching ordini: {e}")
+            self.logger.error(f"❌ Errore critico nel matching ordini Kraken: {e}")
             return {}
-
+            
     def _normalize_ticker(self, ticker):
         if not ticker: return ""
         t = str(ticker).upper().replace("/", "").replace(" ", "")
@@ -137,25 +164,29 @@ class PerformerLA:
         return t
 
     def esegui_ordine(self, asset, direzione, size, leverage, voto, sl=None, tp=None, tipo_op="Swing"):
-        """
-        VERSIONE CHIMERA: Gestisce ingressi Market (Scalp) o Limit (Swing)
-        con arrotondamento prezzi basato su precisione asset reale.
-        """
         try:
+            # 1. IL FIX DEFINITIVO PER I NOMI UMANI
+            # Non importa cosa riceve (asset), noi usiamo SOLO il ticker ufficiale di Kraken
             symbol = asset_list.get_ticker(asset)
+            
+            # Se per qualche motivo asset_list non restituisce nulla, fermiamo tutto prima dell'errore
+            if not symbol:
+                self.logger.error(f"❌ Asset {asset} non trovato in ASSET_LIST. Operazione annullata.")
+                return {'success': False, 'error': 'Invalid Ticker'}
+
+            # Da qui in poi, il bot userà SEMPRE 'symbol' (es. XETHXXBT) e mai più 'asset'
             tipo_ordine_side = 'buy' if direzione.upper() in ["BUY", "LONG"] else 'sell'
-            
-            # Se Scalp, entriamo a mercato per velocità. Se Swing, usiamo Limit (se prezzo disponibile)
-            tipo_esecuzione = 'market' if tipo_op == "Scalp" else 'market' # Default market per ora, estendibile
+            tipo_esecuzione = 'market'
 
-            params = {
-                'leverage': str(leverage),
-                'trading_agreement': 'agree'
-            }
+            # 2. FIX LEVA (per evitare 'Invalid arguments')
+            params = {'trading_agreement': 'agree'}
+            if leverage and float(leverage) > 1:
+                params['leverage'] = str(leverage)
 
-            self.logger.info(f"🛒 ESECUZIONE {tipo_op} | {direzione} {asset} | Size: {size} | Voto: {voto}")
-            
-            # Esecuzione Ordine Principale
+            # Log di controllo per vedere la trasformazione (es. ETH/BTC -> XETHXXBT)
+            self.logger.info(f"🚀 CHIMERA EXEC | {asset} mappato in {symbol} | Side: {tipo_ordine_side}")
+
+            # 3. ESECUZIONE (usando symbol, non asset)
             order = self.exchange.create_order(
                 symbol=symbol, 
                 type=tipo_esecuzione, 
@@ -175,8 +206,9 @@ class PerformerLA:
                 # --- PROTEZIONE STOP LOSS ---
                 if sl and float(sl) > 0:
                     self.logger.info(f"🛡️ Project Chimera: Inserimento SL a {sl}...")
+                    # Passiamo 'symbol' (il nome Kraken) invece di 'asset' (il nome umano)
                     res_sl = self.gestisci_ordine_protezione(
-                        asset=asset, tipo_protezione='stop-loss', prezzo=sl,
+                        asset=symbol, tipo_protezione='stop-loss', prezzo=sl,
                         direzione_aperta=direzione.upper(), size_fallback=size, leverage=leverage
                     )
                     
@@ -185,27 +217,35 @@ class PerformerLA:
                         self.logger.info(f"✅ SL inserito: {sl_id}")
                     else:
                         errore_sl = res_sl.get('error', 'Errore sconosciuto')
-                        self.logger.critical(f"🚨 FALLIMENTO SL {asset}: {errore_sl}. EMERGENZA CHIUSURA!")
-                        # Panic Sell/Cover
+                        self.logger.critical(f"🚨 FALLIMENTO SL {symbol}: {errore_sl}. EMERGENZA CHIUSURA!")
+                        
+                        # Panic Sell/Cover: usiamo 'symbol' e la logica della leva filtrata
+                        panic_params = {'trading_agreement': 'agree'}
+                        if leverage and float(leverage) > 1:
+                            panic_params['leverage'] = str(leverage)
+                            
                         self.exchange.create_order(
-                            symbol=symbol, type='market', 
+                            symbol=symbol, 
+                            type='market', 
                             side='sell' if direzione.upper() in ['BUY', 'LONG'] else 'buy', 
-                            amount=size, params={'leverage': str(leverage)}
+                            amount=size, 
+                            params=panic_params
                         )
                         return {'success': False, 'error': f'SL_FAILED: {errore_sl}'}
 
                 # --- PROTEZIONE TAKE PROFIT ---
                 if tp and float(tp) > 0:
+                    # Anche qui, usiamo 'symbol'
                     res_tp = self.gestisci_ordine_protezione(
-                        asset=asset, tipo_protezione='take-profit', prezzo=tp,
+                        asset=symbol, tipo_protezione='take-profit', prezzo=tp,
                         direzione_aperta=direzione.upper(), size_fallback=size, leverage=leverage
                     )
                     if res_tp and res_tp.get('success'):
                         tp_id = res_tp.get('id')
                         self.logger.info(f"✅ TP inserito: {tp_id}")
 
-                # Memoria Persistente Chimera
-                self.ordini_attivi[asset] = {
+                # Memoria Persistente Chimera: usiamo 'symbol' come chiave per coerenza con l'exchange
+                self.ordini_attivi[symbol] = {
                     'order_id': main_id,
                     'sl_id': sl_id,
                     'tp_id': tp_id,
@@ -227,37 +267,64 @@ class PerformerLA:
             return {'success': False, 'error': str(e)}
             
     def gestisci_ordine_protezione(self, asset, tipo_protezione, prezzo, direzione_aperta, size_fallback, leverage=1):
-        """ Crea ordini di Stop o Limit per proteggere la posizione """
+        """ 
+        VERSIONE CHIMERA: Fix condizionale per reduce_only e leva.
+        Risolve l'errore "reduce_only only valid for leveraged orders".
+        """
         try:
-            symbol = asset_list.get_ticker(asset)
+            # 1. MAPPA DI EMERGENZA (Converte nomi umani in nomi Kraken)
+            mappa_tipi = {
+                'SL': 'stop-loss',
+                'STOP-LOSS': 'stop-loss',
+                'TP': 'take-profit',
+                'TAKE-PROFIT': 'take-profit'
+            }
+            
+            # Applichiamo la traduzione
+            tipo_kraken = mappa_tipi.get(tipo_protezione.upper(), tipo_protezione.lower())
+            
             side_chiusura = "sell" if direzione_aperta.upper() in ["BUY", "LONG"] else "buy"
+            prezzo_fmt = self.qprice(asset, prezzo)
             
-            # Formattazione chirurgica del prezzo
-            prezzo_fmt = self.qprice(symbol, prezzo)
-            volume_fmt = str(size_fallback) 
-            
+            # Prepariamo i parametri base
             params = {
-                'pair': symbol,
+                'pair': asset,
                 'type': side_chiusura,
-                'ordertype': tipo_protezione,
+                'ordertype': tipo_kraken, 
                 'price': prezzo_fmt,
-                'volume': volume_fmt,
-                'reduce_only': True,
+                'volume': str(size_fallback),
                 'trading_agreement': 'agree'
             }
 
-            if leverage and float(leverage) > 1:
-                params['leverage'] = str(leverage)
+            # --- FIX CRUCIALE CHIMERA: GESTIONE LEVA E REDUCE_ONLY ---
+            # Kraken accetta reduce_only SOLO se la leva è > 1
+            current_lev = float(leverage) if leverage else 1
+            
+            if current_lev > 1:
+                params['leverage'] = str(int(current_lev))
+                params['reduce_only'] = True
+                self.logger.info(f"🛡️ Ordine Margin rilevato (Leva {int(current_lev)}). Attivazione reduce_only.")
+            else:
+                # Per ordini SPOT (leverage 1), reduce_only deve essere ASSENTE
+                # Non mettiamo params['reduce_only'] = False, lo escludiamo proprio.
+                self.logger.info(f"🛒 Ordine Spot rilevato (Leva 1). Disattivazione reduce_only.")
+
+            # --- LOG DI CONTROLLO ---
+            self.logger.info(f"DEBUG CHIMERA | Asset: {asset} | Params: {params}")
             
             res = self.exchange.private_post_addorder(params)
             
             if res and 'result' in res and 'txid' in res['result']:
                 return {'success': True, 'id': res['result']['txid'][0]}
             
-            return {'success': False, 'error': str(res.get('error'))}
+            error_msg = str(res.get('error'))
+            self.logger.error(f"❌ Errore Kraken {asset}: {error_msg}")
+            return {'success': False, 'error': error_msg}
+            
         except Exception as e:
+            self.logger.error(f"❌ Eccezione critica {asset}: {e}")
             return {'success': False, 'error': str(e)}
-
+    
     def pulizia_totale_ordini(self, asset):
         """ Rimuove ogni ordine orfano per l'asset specificato """
         try:

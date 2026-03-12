@@ -115,7 +115,7 @@ class DecisionSchema(BaseModel):
     @field_validator("leverage")
     def lev_ok(cls, v):
         try: 
-            return max(1.0, min(5.0, float(v)))
+            return max(1.0, min(10.0, float(v)))
         except: 
             return 1.0
 
@@ -700,6 +700,7 @@ class BrainLA:
         # Estrazione Order Flow (Protetto da sovrascritture errate)
         cvd_istantaneo = dati_engine.get('cvd_istantaneo', 0.0)
         prev_vah = dati_engine.get('vah_ieri', dati_engine.get('vah', 0))
+        prev_val = dati_engine.get("prev_val", 0)
         price_velocity = dati_engine.get('price_velocity', 0.0)
         is_explosive = dati_engine.get('is_explosive', False)
         iceberg = dati_engine.get('iceberg_presenti', False)
@@ -738,8 +739,8 @@ class BrainLA:
         z_dist_vwap = dati_engine.get('z_score_dist_vwap', 0)
         muro_supporto_prezzo = dati_engine.get('muro_supporto', 0.0)
         muro_resistenza_prezzo = dati_engine.get('muro_resistenza', 0.0)
-        dist_supportoupporto = dati_engine.get('dist_supportoupporto', 999.0)
-        dist_resistenzaesistenza = dati_engine.get('dist_resistenzaesistenza', 999.0)
+        dist_supporto = dati_engine.get('dist_supporto', 999.0)
+        dist_resistenza = dati_engine.get('dist_resistenza', 999.0)
         latency = dati_engine.get('kraken_latency', 0)
         
         # --- 2. GERARCHIA CHIMERA: 4H | 1H | 15M ---
@@ -752,8 +753,8 @@ class BrainLA:
         mappa_1h = {
             'muro_supportoupporto_h1': muro_supporto_prezzo,
             'muro_resistenzaesistenza_h1': muro_resistenza_prezzo,
-            'distanza_supporto_h1_perc': round(dist_supportoupporto, 2),
-            'distanza_resistenza_h1_perc': round(dist_resistenzaesistenza, 2),
+            'distanza_supporto_h1_perc': round(dist_supporto, 2),
+            'distanza_resistenza_h1_perc': round(dist_resistenza, 2),
             'vwap_distanza_perc': round((entry_price - vwap) / vwap * 100, 3) if vwap != 0 else 0
         }
 
@@ -798,7 +799,7 @@ class BrainLA:
 
         bp_info = 'Pressione BUY' if bp > 1.2 else 'Pressione SELL' if bp < 0.8 else 'Equilibrio'
         self.logger.info(f'🔹 [LIQUIDITY] Book Pressure: {bp:.2f} [{bp_info}] | Spoofing: {spoofing:.2f}')
-        self.logger.info(f'   ➤ Muri H1: Supporto {muro_supporto_prezzo} ({dist_supportoupporto}%) | Resistenza {muro_resistenza_prezzo} ({dist_resistenzaesistenza}%)')
+        self.logger.info(f'   ➤ Muri H1: Supporto {muro_supporto_prezzo} ({dist_supporto}%) | Resistenza {muro_resistenza_prezzo} ({dist_resistenza}%)')
 
         regime_desc = '📈 TREND' if hurst > 0.55 else '↔️ RANGE'
         self.logger.info(f'🔹 [MARKET REGIME] Hurst: {hurst:.2f} [{regime_desc}] | HMM: {regime_hmm}')
@@ -845,8 +846,8 @@ class BrainLA:
                 'hvn': hvn[:3], 'lvn': lvn[:3]
             },
             'muri_liquidi': {
-                'supporto': {'prezzo': muro_supporto_prezzo, 'distanza_perc': dist_supportoupporto},
-                'resistenza': {'prezzo': muro_resistenza_prezzo, 'distanza_perc': dist_resistenzaesistenza}
+                'supporto': {'prezzo': muro_supporto_prezzo, 'distanza_perc': dist_supporto},
+                'resistenza': {'prezzo': muro_resistenza_prezzo, 'distanza_perc': dist_resistenza}
             },
             'validazione_hft': {
                 'iceberg_detected': iceberg,
@@ -963,16 +964,61 @@ class BrainLA:
 
         # --- 5. LOGICA DI BUSINESS E FILTRI (CHIMERA UNLEASHED) ---
         macro_upper = str(macro_sentiment).upper()
-        if (macro_upper == "BEARISH" and decision.get('direzione') == "BUY") or \
-           (macro_upper == "BULLISH" and decision.get('direzione') == "SELL"):
-            decision['sizing'] = round(decision.get('sizing', 0) * 0.7, 5)
-            decision['razionale'] += " | Counter-trend: Sizing ridotto."
+        direzione_ia = decision.get("direzione", "FLAT")
+        voto_ia = int(decision.get("voto", 0))
+        
+        # Recupero dati tecnici per decisioni granulari
+        market_regime = dati_engine.get('market_regime', 'NEUTRAL')
+        
+        # FIX: Recupero corretto della salute dal dizionario health_data o dal valore flat
+        raw_health = dati_engine.get('health_data', {})
+        market_health_val = raw_health.get('market_health_index', 1.0) if isinstance(raw_health, dict) else dati_engine.get('market_health', 1.0)
+        
+        from core.asset_list import ASSET_CONFIG
+        conf = ASSET_CONFIG.get(ticker_ufficiale, {})
+        max_lev_consentita = conf.get('max_leverage', 10)
 
-        # SBLOCCO FORZATO VELOCITY
-        if abs(price_velocity) > 0.0006 and decision.get('direzione') != "FLAT":
-            if decision.get('voto', 0) < 6:
-                decision['voto'] = 7
-                decision['razionale'] += f" | ⚡ FORZA CHIMERA: Velocity ({price_velocity:.6f}) domina."
+        if direzione_ia != "FLAT":
+            # A. GESTIONE LEVA DINAMICA (Meritocratica & Strategica)
+            if voto_ia >= 9:
+                leva_base = max_lev_consentita
+            elif voto_ia >= 7:
+                leva_base = min(7, max_lev_consentita)
+            else:
+                leva_base = 2  # Minimo per attivare il Margine su Kraken
+
+            # Correzione leva in base al Regime di Mercato
+            if market_regime == "MEAN_REVERSION":
+                leva_finale = max(2, round(leva_base * 0.6))
+                decision['razionale'] += f" | 📉 Mean Rev: Leva difesa a {leva_finale}x."
+            elif market_regime == "TRENDING" and voto_ia >= 8:
+                leva_finale = max_lev_consentita
+                decision['razionale'] += f" | 🚀 Trend Boost: Max Leverage {leva_finale}x."
+            else:
+                leva_finale = leva_base
+
+            decision['leverage'] = int(leva_finale)
+
+            # B. CORREZIONE SIZING (Esposizione Capitale)
+            # 1. Filtro Counter-trend Macro
+            if (macro_upper == "BEARISH" and direzione_ia == "BUY") or \
+               (macro_upper == "BULLISH" and direzione_ia == "SELL"):
+                decision['sizing'] = round(decision.get('sizing', 1.0) * 0.7, 5)
+                decision['razionale'] += " | Counter-trend: Sizing -30%."
+
+            # 2. Filtro Salute del Mercato (Health Check)
+            if market_health_val < 0.25:
+                decision['sizing'] = round(decision.get('sizing', 1.0) * 0.4, 5)
+                decision['razionale'] += f" | ⚠️ Health Critical ({market_health_val}): Sizing -60%."
+            elif market_health_val < 0.50:
+                decision['sizing'] = round(decision.get('sizing', 1.0) * 0.8, 5)
+                decision['razionale'] += " | 🟡 Health Weak: Sizing -20%."
+
+            # C. SBLOCCO REATTIVO VELOCITY
+            if abs(price_velocity) > 0.0006:
+                if voto_ia < 6:
+                    decision['voto'] = 7
+                    decision['razionale'] += f" | ⚡ Velocity Alert ({price_velocity:.6f}): Voto forzato."
 
         # --- 6. LIVELLI FINALI E TELEGRAM ---
         direzione_ia = decision.get("direzione", "FLAT")
@@ -990,17 +1036,26 @@ class BrainLA:
 
             if voto_ia >= 6:
                 str_voti_tg = "\n".join([f"• {k.replace('_', ' ')}: {v}/10" for k, v in voti_chimera.items()])
+                
+                # Recuperiamo il regime per mostrarlo nel messaggio
+                regime_tg = dati_engine.get('market_regime', 'NEUTRAL')
+                
                 msg_telegram = (
                     f"📝 *ANALISI TECNICA {ticker_ufficiale}*\n━━━━━━━━━━━━━━━\n"
                     f"📊 *Matrice Chimera:*\n{str_voti_tg if voti_chimera else 'N/A'}\n"
-                    f"⚖️ *Azione:* {direzione_ia} | ⭐ *Voto:* {voto_ia}/10\n"
-                    f"🎯 *SL:* {decision['sl']} | *TP:* {decision['tp']}"
+                    f"━━━━━━━━━━━━━━━\n"
+                    f"⚖️ *Azione:* {direzione_ia}\n"
+                    f"⭐ *Voto IA:* {voto_ia}/10\n"
+                    f"⚙️ *Leva:* {decision.get('leverage', 1)}x\n" # <--- MOSTRA LA NUOVA LEVA DINAMICA
+                    f"🌐 *Regime:* {regime_tg}\n"            # <--- MOSTRA IL REGIME (TREND/MEAN_REV)
+                    f"🎯 *SL:* {decision['sl']} | *TP:* {decision['tp']}\n"
+                    f"📖 *Razionale:* {decision.get('razionale', 'N/A')}"
                 )
                 try:
                     target_alerts = getattr(self, 'alerts', None) or (getattr(self, 'trade_manager', None).alerts if hasattr(self, 'trade_manager') else None)
                     if target_alerts: target_alerts.invia_alert(msg_telegram)
-                except Exception as te: self.logger.error(f"⚠️ Errore Telegram: {te}")
-
+                except Exception as te: 
+                    self.logger.error(f"⚠️ Errore Telegram: {te}")
         # Risk Management finale
         ok_risk, msg_risk = self.risk_manager.check_risk(decision, self.account_limits)
         if not ok_risk and voto_ia < 8:

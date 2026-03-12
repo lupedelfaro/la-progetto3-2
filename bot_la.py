@@ -93,9 +93,36 @@ def main():
             # --- C. CICLO ASSET PRINCIPALI ---
             for asset in al_config.ASSET_PRINCIPALI:
                 try:
-                    # 1. Gestione Posizioni Aperte (Protezione & Fase Due)
-                    is_aperta = trade_manager.sincronizza_e_ripara(asset)
+                    # 1. Recupero lo stato REALE da Kraken per questo asset
+                    posizioni_reali = performer.get_open_positions_real()
+                    # Cerco se l'asset attuale è tra le posizioni aperte (usando il match del performer)
+                    pos_real_data = next((v for k, v in posizioni_reali.items() if performer._normalize_ticker(v.get('pair')) == performer._normalize_ticker(asset)), None)
 
+                    # --- SCUDO CHIMERA: PROTEZIONE ORFANI ---
+                    if pos_real_data and (not pos_real_data.get('has_sl') or not pos_real_data.get('has_tp')):
+                        logger.warning(f"🛡️ Scudo Chimera: Rilevata mancanza protezione su {asset}!")
+                        
+                        # Recupero dati per calcolo paracadute
+                        raw_p = engine.get_full_market_data(asset)
+                        dati_p = raw_p[0] if isinstance(raw_p, tuple) else raw_p
+                        atr_p = dati_p.get('atr', 0) if dati_p else 0
+                        prezzo_p = float(pos_real_data.get('price', 0))
+                        direzione_p = "buy" if pos_real_data.get('type') == 'buy' else "sell"
+                        vol_p = pos_real_data.get('vol')
+
+                        if not pos_real_data.get('has_sl'):
+                            dist_sl = atr_p * 2 if atr_p > 0 else prezzo_p * 0.015
+                            prezzo_sl = prezzo_p - dist_sl if direzione_p == "buy" else prezzo_p + dist_sl
+                            performer.gestisci_ordine_protezione(asset, "SL", prezzo_sl, direzione_p, vol_p)
+
+                        if not pos_real_data.get('has_tp'):
+                            dist_tp = atr_p * 3 if atr_p > 0 else prezzo_p * 0.03
+                            prezzo_tp = prezzo_p + dist_tp if direzione_p == "buy" else prezzo_p - dist_tp
+                            performer.gestisci_ordine_protezione(asset, "TP", prezzo_tp, direzione_p, vol_p)
+
+                    # 2. Gestione Posizioni Aperte (Protezione & Fase Due)
+                    is_aperta = trade_manager.sincronizza_e_ripara(asset)
+                    
                     if is_aperta:
                         risultato_raw = engine.get_full_market_data(asset)
                         dati_freschi = risultato_raw[0] if isinstance(risultato_raw, tuple) else risultato_raw
@@ -133,6 +160,8 @@ def main():
                         # Recupero dati profondi
                         res_raw = engine.get_full_market_data(asset)
                         res = res_raw[0] if isinstance(res_raw, tuple) else res_raw
+                        import json
+                        logger.info(f"DEBUG CHIAVI ENGINE: {json.dumps(list(res.keys()), indent=2)}")
                         _, macro_val = macro.get_macro_data()
     
                         if not res or res.get('close', 0) == 0:
@@ -155,27 +184,30 @@ def main():
                                 {"price": prezzo_ref * 1.015, "type": "resistance", "volume": 1.0}
                             ]
 
-                        # Costruzione Dizionario per il Brain (Nomi chiavi blindati)
+                        # Costruzione Dizionario CHIMERA (Allineamento 1:1 con il tuo DEBUG)
                         dati_mercato_chimera = {
-                            "ticker": asset,
-                            "prezzo": prezzo_ref,
-                            "atr": atr_sicuro,
-                            "market_regime": res.get('market_regime', 'MEAN_REVERSION'),
-                            "price_velocity": res.get('price_velocity', 0.0001),
-                            "spread_perc": res.get('spread_perc', 0.01),
-                            "order_flow_advanced": {
-                                "cvd_istantaneo": float(res.get('cvd_istantaneo', res.get('cvd', 0))), 
-                                "vpin_toxicity": float(res.get('vpin_toxicity', 0.05))
-                            },
-                            "microstruttura_hft": {
-                                "muri_liquidita": muri,
-                                "indice_spoofing": float(res.get('indice_spoofing', 0))
+                            'close': res.get('close', res.get('price', 0)), # Prova entrambi
+                            'atr': res.get('atr', 0),
+                            'health_data': res.get('health_data', {'score': 0.5}),
+                            'market_regime': res.get('market_regime', 'UNKNOWN'),
+                            'cvd_istantaneo': res.get('cvd_istantaneo', 0),
+                            'vpin': res.get('vpin', 0),
+                            'price_velocity': res.get('price_velocity', 0),
+                            'muro_supporto': res.get('muro_supporto', 0),
+                            'muro_resistenza': res.get('muro_resistenza', 0),
+                            'dist_supporto': res.get('dist_supporto', 999),
+                            'dist_resistenza': res.get('dist_resistenza', 999),
+                            'hurst_exponent': res.get('hurst_exponent', 0.5),
+                            'indice_spoofing': res.get('indice_spoofing', 0),
+                            'microstruttura_hft': {
+                                'muri_liquidita': res.get('liquidity_pools', []),
+                                'aggressivita': res.get('aggressivita', 0)
                             }
                         }
                         
-                        # Log di verifica pre-invio
-                        logger.info(f"🧠 DATI INVIATI A GEMINI [{asset}]: CVD={dati_mercato_chimera['order_flow_advanced'].get('cvd_istantaneo', 0.0):.2f}, ATR={atr_sicuro:.2f}")
-    
+                        # LOG CORRETTO (Prende i dati dal nuovo dizionario)
+                        cvd_log = dati_mercato_chimera.get('cvd_istantaneo', 0.0)
+                        logger.info(f"🧠 DATI INVIATI A GEMINI [{asset}]: CVD={cvd_log:.2f}, ATR={atr_sicuro:.2f}")    
                         history = fe.get_recent_summary()
                         decision = brain.full_global_strategy(
                             dati_engine=dati_mercato_chimera, 
