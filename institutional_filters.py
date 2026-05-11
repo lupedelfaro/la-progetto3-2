@@ -41,5 +41,5 @@ def filtro_istituzionali(lista_asset):
     """
     Filtra asset secondo la lista istituzionali (integrata con asset_list).
     """
-    from asset_list import ASSET_PRINCIPALI
+    from core.asset_list import ASSET_PRINCIPALI
     return [a for a in lista_asset if a in ASSET_PRINCIPALI]
